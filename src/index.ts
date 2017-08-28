@@ -3,7 +3,6 @@ import { generatePaths } from './paths'
 import { generateSelectors } from './selectors'
 import { generateActions } from './actions'
 import { generateReducer } from './reducer'
-import { parseParent } from './utils'
 
 import { BoxModel, Schema, Options } from '../index'
 
@@ -27,11 +26,10 @@ export default function generate(
   }
 
   const modelId = `${modelName}Id`
-  const parent = parseParent(options.parent)
 
   const types = generateTypes(modelName)
-  const paths = generatePaths(modelName, modelId, parent)
-  const selectors = generateSelectors(modelName, parent)
+  const paths = generatePaths(modelName, modelId)
+  const selectors = generateSelectors(modelName)
   const actions = generateActions(modelName, types, schema)
   const reducer = generateReducer(modelName, types)
 

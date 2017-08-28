@@ -3,7 +3,6 @@
 // Definitions by: Sam Balana <sam.balana@ardentacademy.com>
 
 import { schema } from 'normalizr'
-import { Reducer } from 'redux'
 
 export type Schema = schema.Entity
 
@@ -28,9 +27,16 @@ export interface Paths {
 
 export interface Selectors {}
 
+export interface ActionPayload {
+  id?: string
+  data?: Object
+  params?: Object
+  message?: string
+}
+
 export interface Action {
   type: string
-  payload: Object
+  payload: ActionPayload
 }
 
 export interface Actions {
@@ -41,7 +47,13 @@ export interface Actions {
   archive: (id: string, params: Params) => Action
 }
 
-export interface State {}
+export interface ModelState {
+  result: string[],
+  loading: boolean,
+  error: string | null,
+}
+
+export type Reducer = (state: ModelState, action: Action) => ModelState
 
 export interface BoxModel {
   modelName: string
@@ -52,7 +64,7 @@ export interface BoxModel {
   paths: Paths
   selectors: Selectors
   actions: Actions
-  reducer: Reducer<State>
+  reducer: Reducer
   $$isBoxModel: true
 }
 

@@ -22,7 +22,6 @@ const createPathFactory = (getPath: Path, parentPath: PathFactory): PathFactory 
 export function generatePaths(
   name: string, // Name of the model
   param: string, // Name of the URL parameter to select when getting
-  parent: BoxModel, // Parent of the model
 ): Paths {
   const parentPath = parent && parent.paths && parent.paths.get
 
