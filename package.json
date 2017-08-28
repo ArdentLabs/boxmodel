@@ -1,0 +1,27 @@
+{
+  "name": "boxmodel",
+  "version": "1.0.0",
+  "description": "API to abstract models, generating common functionality",
+  "main": "index.js",
+  "scripts": {
+    "start": "mocha -w --watch-extensions ts -r ts-node/register src/**/*.spec.ts",
+    "build": "tsc",
+    "lint": "tslint -c tslint.json -p tsconfig.json",
+    "test": "mocha -r ts-node/register src/**/*.spec.ts"
+  },
+  "author": "Sam Balana <sam.balana@ardentacademy.com>",
+  "license": "ISC",
+  "dependencies": {
+    "normalizr": "^3.2.3",
+    "redux": "^3.7.2",
+    "reselect": "^3.0.1"
+  },
+  "devDependencies": {
+    "@types/mocha": "^2.2.42",
+    "@types/node": "^8.0.25",
+    "mocha": "^3.5.0",
+    "ts-node": "^3.3.0",
+    "tslint": "^5.7.0",
+    "typescript": "^2.4.2"
+  }
+}

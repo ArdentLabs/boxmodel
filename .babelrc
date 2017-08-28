@@ -1,0 +1,15 @@
+{
+  "presets": [
+    ["env", {
+      "targets": {
+        "node": "current"
+      },
+      "useBuiltIns": true
+    }]
+  ],
+  "plugins": [
+    "syntax-class-properties",
+    "transform-class-properties",
+    "transform-object-rest-spread"
+  ]
+}
