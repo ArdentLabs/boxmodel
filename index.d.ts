@@ -13,9 +13,7 @@ export interface Types {
   fetch: ActionTuple
   create: ActionTuple
   update: ActionTuple
-  search: ActionTuple
-  reorder: ActionTuple
-  destroy: ActionTuple
+  archive: ActionTuple
 }
 
 export interface Params { [param: string]: string }
@@ -26,11 +24,23 @@ export interface Paths {
   create: PathFactory,  // Path to create a new model.
   get: PathFactory,     // Path to view an existing model.
   edit: PathFactory,    // Path to edit an existing model.
-  reorder: PathFactory, // Path to reorder the submodels of an existing model.
 }
 
 export interface Selectors {}
-export interface Actions {}
+
+export interface Action {
+  type: string
+  payload: Object
+}
+
+export interface Actions {
+  get: (id: string, params: Params) => Action
+  fetch: (params: Params) => Action
+  create: (data: any, params: Params) => Action
+  update: (id: string, data: any, params: Params) => Action
+  archive: (id: string, params: Params) => Action
+}
+
 export interface State {}
 
 export interface BoxModel {

@@ -22,15 +22,14 @@ const createPathFactory = (getPath: Path, parentPath: PathFactory): PathFactory 
 export function generatePaths(
   name: string, // Name of the model
   param: string, // Name of the URL parameter to select when getting
-  parent: BoxModel // Parent of the model
+  parent: BoxModel, // Parent of the model
 ): Paths {
   const parentPath = parent && parent.paths && parent.paths.get
 
   const fetch = createPathFactory(`${name}s`, parentPath)
   const create = createPathFactory(`add-${name}`, parentPath)
-  const get = createPathFactory(params => `${name}s/${params[param]}`, parentPath)
+  const get = createPathFactory((params) => `${name}s/${params[param]}`, parentPath)
   const edit = createPathFactory('edit', get)
-  const reorder = createPathFactory(`reorder/${name}s`, parentPath)
 
-  return { fetch, create, get, edit, reorder }
+  return { fetch, create, get, edit }
 }

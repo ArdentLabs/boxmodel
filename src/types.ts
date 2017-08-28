@@ -20,9 +20,7 @@ export function generateTypes(modelName: string): Types {
   const fetch = factory('FETCH')
   const create = factory('CREATE')
   const update = factory('UPDATE')
-  const search = factory('SEARCH')
-  const reorder = factory('REORDER')
-  const destroy = factory('DESTROY')
+  const archive = factory('ARCHIVE')
 
-  return { get, fetch, create, update, search, reorder, destroy }
+  return { get, fetch, create, update, archive }
 }
