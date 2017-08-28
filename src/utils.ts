@@ -17,7 +17,7 @@ import { }
  */
 
 export function parseParent(parent: BoxModel) {
-  if (!parent) return parent;
+  if (!parent) return parent
 
   //
   // One-to-Many OR Many-to-Many
@@ -27,19 +27,19 @@ export function parseParent(parent: BoxModel) {
     // Type checking
     for (const p of parent) {
       if (typeof p !== 'object' || !p.$$isStateMetadata) {
-        const error = `Expected 'parent' to be an array of metadata objects. Whereas, one element of 'parent' is of type '${typeof p}'.`;
-        throw new TypeError(error);
+        const error = `Expected 'parent' to be an array of metadata objects. Whereas, one element of 'parent' is of type '${typeof p}'.`
+        throw new TypeError(error)
       }
     }
 
     return function getParentFromParams(params) {
       for (const p of parent) {
-        if (p.rootId in params) {
-          return p;
+        if (p.modelId in params) {
+          return p
         }
       }
-      throw new Error('Parent not found in URL parameters. This probably means that one of the models is missing a parent. Specifically these:', parent);
-    };
+      throw new Error('Parent not found in URL parameters. This probably means that one of the models is missing a parent. Specifically these:', parent)
+    }
   }
 
   //
@@ -48,9 +48,9 @@ export function parseParent(parent: BoxModel) {
 
   // Type checking
   if (typeof parent !== 'object' || !parent.$$isStateMetadata) {
-    const error = `Expected 'parent' to a metadata object or an array of metadata objects. Whereas, 'parent' is of type '${typeof parent}'.`;
-    throw new TypeError(error);
+    const error = `Expected 'parent' to a metadata object or an array of metadata objects. Whereas, 'parent' is of type '${typeof parent}'.`
+    throw new TypeError(error)
   }
 
-  return () => parent;
+  return () => parent
 }
