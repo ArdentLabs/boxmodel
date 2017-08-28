@@ -6,19 +6,40 @@ import { schema } from 'normalizr'
 import { Reducer } from 'redux'
 
 export type Schema = schema.Entity
-export interface Types {}
-export interface Paths {}
+
+export type ActionTuple = [string, string, string]
+export interface Types {
+  get: ActionTuple
+  fetch: ActionTuple
+  create: ActionTuple
+  update: ActionTuple
+  search: ActionTuple
+  reorder: ActionTuple
+  destroy: ActionTuple
+}
+
+export interface Params { [param: string]: string }
+export type PathFactory = (params: Params) => string
+export type Path = string | PathFactory
+export interface Paths {
+  fetch: PathFactory,   // Path to view a list of existing models.
+  create: PathFactory,  // Path to create a new model.
+  get: PathFactory,     // Path to view an existing model.
+  edit: PathFactory,    // Path to edit an existing model.
+  reorder: PathFactory, // Path to reorder the submodels of an existing model.
+}
+
 export interface Selectors {}
 export interface Actions {}
 export interface State {}
 
 export interface BoxModel {
-  model: string
+  modelName: string
   modelId: string
   schema: Schema
   parent: BoxModel
   types: Types
-  paths: Object
+  paths: Paths
   selectors: Selectors
   actions: Actions
   reducer: Reducer<State>
@@ -26,5 +47,5 @@ export interface BoxModel {
 }
 
 export interface Options {
-  parent: BoxModel
+  parent?: BoxModel
 }
