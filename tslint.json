@@ -3,8 +3,13 @@
   "rules": {
     "no-console": [false],
     "object-literal-sort-keys": false,
-    "ordered-imports": [false],
+    "ordered-imports": false,
     "quotemark": [true, "single", "avoid-escape"],
-    "semicolon": [true, "never"]
+    "semicolon": [true, "never"],
+    "trailing-comma": false,
+    "no-trailing-whitespace": false,
+    "whitespace": false,
+    "no-empty": false,
+    "interface-name": false
   }
 }
