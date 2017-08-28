@@ -2,9 +2,10 @@
 // Project: boxmodel
 // Definitions by: Sam Balana <sam.balana@ardentacademy.com>
 
-import { Schema } from 'normalizr'
+import { schema } from 'normalizr'
 import { Reducer } from 'redux'
 
+export type Schema = schema.Entity
 export interface Types {}
 export interface Paths {}
 export interface Selectors {}
