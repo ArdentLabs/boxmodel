@@ -99,7 +99,7 @@ function join(model: any, joinWith: JoinWith | undefined, state: any) {
  * model type.
  */
 export function generateSelectors(options: Options): Selectors {
-  const { modelName } = options
+  const { modelName, entitiesSelector, pluralModelName } = options
   const path = options.pluralModelName
 
   /**
@@ -117,7 +117,10 @@ export function generateSelectors(options: Options): Selectors {
   /**
    * Get all the models of the requested type
    */
-  const getEntities = (state: any) => state[path].entities
+  const getEntities = createSelector(
+    entitiesSelector,
+    (entities) => entities[pluralModelName]
+  )
 
   /**
    * Get the requested model

@@ -19,7 +19,8 @@ import { generateRoutes } from './routes'
 export default function generate(input: InputOptions): BoxModel {
   const options: Options = {
     ...input,
-    pluralModelName: input.pluralModelName || pluralize(input.modelName)
+    pluralModelName: input.pluralModelName || pluralize(input.modelName),
+    entitiesSelector: input.entitiesSelector || ((state) => state.models),
   }
 
   const { modelName, pluralModelName } = options

@@ -130,9 +130,15 @@ export interface InputOptions {
 
   // GraphQL fields you wish to use in your application.
   fields: string
+
+  // Selects the entities reducer exposed by boxmodel.
+  entitiesSelector?: (state: any) => any
 }
 
 export interface Options extends InputOptions {
   // Plural, camelCase name for the model.
   pluralModelName: string
+
+  // Selects the entities reducer exposed by boxmodel.
+  entitiesSelector: (state: any) => any
 }
