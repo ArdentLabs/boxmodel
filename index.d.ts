@@ -105,7 +105,7 @@ export interface BoxModel {
   types: Types
 }
 
-export interface Options {
+export interface InputOptions {
   // Singularized, camelCase name for the model.
   modelName: string
 
@@ -120,4 +120,9 @@ export interface Options {
 
   // GraphQL fields you wish to use in your application.
   fields: string
+}
+
+export interface Options extends InputOptions {
+  // Plural, camelCase name for the model.
+  pluralModelName: string
 }
