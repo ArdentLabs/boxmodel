@@ -21,14 +21,14 @@ export interface Params {
   [param: string]: string
 }
 
-export type PathFactory = (params: object) => string
+export type PathGenerator = (id: string) => string
 
 export interface Paths {
-  create: string  // Path to create a new model.
-  edit: string    // Path to edit an existing model.
-  fetch: string   // Path to view a list of existing models.
-  get: string     // Path to view an existing model.
-  reorder: string // Path to reorder existing models
+  create: PathGenerator  // Path to create a new model.
+  edit: PathGenerator    // Path to edit an existing model.
+  fetch: PathGenerator   // Path to view a list of existing models.
+  get: PathGenerator     // Path to view an existing model.
+  reorder: PathGenerator // Path to reorder existing models
 }
 
 export interface Selectors {
