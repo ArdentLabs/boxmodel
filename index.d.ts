@@ -36,9 +36,11 @@ export interface Selectors {
 
 export interface ActionPayload {
   id?: string
-  data?: any
   params?: any
   message?: string
+  filters?: any
+  sorts?: any
+  values?: any
 }
 
 export interface Action {

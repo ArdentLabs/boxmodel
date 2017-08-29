@@ -12,29 +12,29 @@ import { getRequest } from './types'
  *         (get, fetch, create, search, update, reorder, and destroy)
  */
 export function generateActions(types: Types): Actions {
-  const get = (id: string, params: Params) => ({
+  const get = (id: string) => ({
     type: getRequest(types.get),
-    payload: { id, params },
+    payload: { id },
   })
 
-  const fetch = (params: Params) => ({
+  const fetch = () => ({
     type: getRequest(types.fetch),
-    payload: { params },
+    payload: {},
   })
 
-  const create = (data: any, params: Params) => ({
+  const create = (values: any) => ({
     type: getRequest(types.create),
-    payload: { data, params },
+    payload: { values },
   })
 
-  const update = (id: string, data: any, params: Params) => ({
+  const update = (id: string, values: any) => ({
     type: getRequest(types.update),
-    payload: { id, data, params },
+    payload: { id, values },
   })
 
-  const archive = (id: string, params: Params) => ({
+  const archive = (id: string) => ({
     type: getRequest(types.archive),
-    payload: { id, params },
+    payload: { id },
   })
 
   return { get, fetch, create, update, archive }
