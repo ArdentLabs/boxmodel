@@ -1,3 +1,5 @@
+import * as pluralize from 'pluralize'
+
 import { generateTypes } from './types'
 import { generatePaths } from './paths'
 import { generateSelectors } from './selectors'
@@ -5,7 +7,8 @@ import { generateActions } from './actions'
 import { generateSagas } from './sagas'
 import { generateReducer } from './reducer'
 
-import { BoxModel, Schema, Options } from '../index'
+import { BoxModel, Options } from '../index'
+import { generateRoutes } from './routes'
 
 /**
  * Generates all the metadata state that any Model will need. This allows
@@ -14,29 +17,29 @@ import { BoxModel, Schema, Options } from '../index'
  * generation of metadata reduces human error.
  */
 export default function generate(options: Options): BoxModel {
-  if (!modelName || typeof modelName !== 'string') {
-    throw new TypeError('`modelName` has to be a string')
+  if (!options.pluralModelName) {
+    options.pluralModelName = pluralize(options.modelName)
   }
 
-  const modelId = `${modelName}Id`
-
+  const { modelName, pluralModelName } = options
   const types = generateTypes(options)
-  const paths = generatePaths(options, modelId)
-  const actions = generateActions(options, types)
-  const sagas = generateSagas(options, types)
 
-  const reducer = generateReducer(options, types)
+  const actions = generateActions(types)
+  const paths = generatePaths(options)
+  const reducer = generateReducer(types)
+  const routes = generateRoutes(options)
+  const sagas = generateSagas(options, types)
   const selectors = generateSelectors(options)
 
   return {
     $$isBoxModel: true,
     actions,
-    modelId,
     modelName,
     paths,
+    pluralModelName,
     reducer,
+    routes,
     sagas,
-    schema,
     selectors,
     types,
   }

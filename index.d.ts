@@ -3,10 +3,12 @@
 // Definitions by: Sam Balana <sam.balana@ardentacademy.com>
 
 import { schema } from 'normalizr'
+import { RouteProps } from 'react-router'
 
 export type Schema = schema.Entity
 
 export type ActionTuple = [string, string, string]
+
 export interface Types {
   get: ActionTuple
   fetch: ActionTuple
@@ -15,22 +17,27 @@ export interface Types {
   archive: ActionTuple
 }
 
-export interface Params { [param: string]: string }
-export type PathFactory = (params: Params) => string
-export type Path = string | PathFactory
-export interface Paths {
-  fetch: PathFactory,   // Path to view a list of existing models.
-  create: PathFactory,  // Path to create a new model.
-  get: PathFactory,     // Path to view an existing model.
-  edit: PathFactory,    // Path to edit an existing model.
+export interface Params {
+  [param: string]: string
 }
 
-export interface Selectors {}
+export type PathFactory = (params: object) => string
+
+export interface Paths {
+  create: string  // Path to create a new model.
+  edit: string    // Path to edit an existing model.
+  fetch: string   // Path to view a list of existing models.
+  get: string     // Path to view an existing model.
+  reorder: string // Path to reorder existing models
+}
+
+export interface Selectors {
+}
 
 export interface ActionPayload {
   id?: string
-  data?: Object
-  params?: Object
+  data?: any
+  params?: any
   message?: string
 }
 
@@ -81,15 +88,17 @@ export type Selector = (state: any, props: Props) => any
 export interface Sagas {
 }
 
+export type Routes = Partial<RouteProps>[]
+
 export interface BoxModel {
   $$isBoxModel: true
   actions: Actions
-  modelId: string
   modelName: string
   paths: Paths
+  pluralModelName: string
   reducer: Reducer
+  routes: Routes
   sagas: Sagas
-  schema: Schema
   selectors: Selectors
   types: Types
 }
@@ -97,6 +106,9 @@ export interface BoxModel {
 export interface Options {
   // Singularized, camelCase name for the model.
   modelName: string
+
+  // Plural, camelCase name for the model.
+  pluralModelName: string
 
   // Normalizr schema used for normalizing the result from the GraphQL server.
   schema: Schema

@@ -1,19 +1,19 @@
-import { Path, PathFactory, Params, Paths, BoxModel } from '../index'
+import { PathFactory, Paths } from '../index'
 
-const createPathFactory = (getPath: Path, parentPath: PathFactory): PathFactory => (params) => {
-  const path = typeof getPath === 'string'
-    ? getPath
-    : getPath(params)
-
-  if (path.indexOf('undefined') !== -1) {
-    throw new Error(`Path is not valid: ${path}`)
+const createPath = (path: string, absolute?: boolean): PathFactory => (params) => {
+  if (absolute && !path.startsWith('/')) {
+    path = `/${path}`
+  }
+  else if (!absolute && path.startsWith('/')) {
+    path = path.substring(1)
   }
 
-  if (parentPath) {
-    return `${parentPath(params)}/${path}`
+  // End in slash to allow more consistent and predictable behaviour
+  if (!path.endsWith('/')) {
+    path = `${path}/`
   }
 
-  return `/${path}`
+  return path
 }
 
 /**
@@ -21,14 +21,19 @@ const createPathFactory = (getPath: Path, parentPath: PathFactory): PathFactory 
  */
 export function generatePaths(
   name: string, // Name of the model
-  param: string, // Name of the URL parameter to select when getting
+  pluralName: string, // Plural form of model's name
 ): Paths {
-  const parentPath = parent && parent.paths && parent.paths.get
+  const create = createPath(`add-${name}`)
+  const edit = createPath(`${pluralName}/${name}Id/edit`, true)
+  const fetch = createPath(`${pluralName}`, true)
+  const get = createPath(`${pluralName}/${name}Id`, true)
+  const reorder = createPath(`reorder-${pluralName}`)
 
-  const fetch = createPathFactory(`${name}s`, parentPath)
-  const create = createPathFactory(`add-${name}`, parentPath)
-  const get = createPathFactory((params) => `${name}s/${params[param]}`, parentPath)
-  const edit = createPathFactory('edit', get)
-
-  return { fetch, create, get, edit }
+  return {
+    create,
+    edit,
+    fetch,
+    get,
+    reorder
+  }
 }

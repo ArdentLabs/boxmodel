@@ -7,7 +7,7 @@ import entitiesReducer, { types } from './entitiesReducer'
 
 const lessonSchema = new schema.Entity('lessons')
 
-describe('entitiesReducer', () => {
+describe('entities reducer', () => {
   const store: Store<{ entities: any }> = createStore(combineReducers({
     entities: entitiesReducer,
   }))

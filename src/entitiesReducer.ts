@@ -1,7 +1,8 @@
 import * as deepmerge from 'deepmerge'
 
-import {Reducer} from 'redux'
-import {schema} from 'normalizr'
+import { schema } from 'normalizr'
+
+import { Action} from '../index'
 
 export const types = {
   MODEL_UPDATE: 'MODEL_UPDATE',
@@ -32,27 +33,31 @@ interface State {
   }
 }
 
-interface Action {
+interface ModelAction extends Action {
   type: string
   payload: {
-    entities?: Partial<State>;
+    entities: Partial<State>;
     schema?: schema.Entity;
     id?: string;
   }
-  meta: any
-  error: any
 }
 
-export default  (state: State = {}, action: Action): State => {
-  const {type, payload, meta, error} = action
+export default (state: State = {}, action: ModelAction): State => {
+  const { type, payload } = action
 
   switch (type) {
     case types.MODEL_UPDATE:
     case types.MODEL_CREATE_OK:
     case types.MODEL_FETCH_OK:
     case types.MODEL_GET_OK:
-      return deepmerge(state, payload.entities)
+      return deepmerge(state, payload.entities) as State
     case types.MODEL_ARCHIVE_OK:
+      // Null check
+      if (!payload.schema || !payload.id) {
+        console.error('Received an archiving action, but schema and/or id are not specified.')
+        return state
+      }
+
       // Destructure to take out the archived item
       const {
         [payload.schema.key]: {

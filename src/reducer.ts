@@ -7,10 +7,7 @@ const initialState: ModelState = {
   error: null
 }
 
-export function generateReducer(
-  modelName: string,
-  types: Types,
-): Reducer {
+export function generateReducer(types: Types): Reducer {
   return (state: ModelState = initialState, action: Action) => {
     const { type, payload } = action
     switch (type) {

@@ -1,14 +1,28 @@
 {
-  "extends": ["tslint:recommended"],
+  "extends": [
+    "tslint:recommended"
+  ],
   "rules": {
-    "no-console": [false],
+    "no-console": [
+      false
+    ],
     "object-literal-sort-keys": false,
     "ordered-imports": false,
-    "quotemark": [true, "single", "avoid-escape"],
-    "semicolon": [true, "never"],
+    "quotemark": [
+      true,
+      "single",
+      "avoid-escape"
+    ],
+    "semicolon": [
+      true,
+      "never"
+    ],
     "trailing-comma": false,
     "no-trailing-whitespace": false,
     "whitespace": false,
+    "one-line": [
+      "check-open-brace"
+    ],
     "no-empty": false,
     "interface-name": false
   }
