@@ -3,7 +3,7 @@ import { deepEqual } from 'assert'
 import { combineReducers, createStore, Store } from 'redux'
 import { normalize, schema } from 'normalizr'
 
-import entitiesReducer, { types } from './enititesReducer'
+import entitiesReducer, { types } from './entitiesReducer'
 
 const lessonSchema = new schema.Entity('lessons')
 
