@@ -3,7 +3,7 @@ import { deepEqual } from 'assert'
 import { combineReducers, createStore, Store } from 'redux'
 import { normalize, schema } from 'normalizr'
 
-import entitiesReducer, { types } from './entitiesReducer'
+import entitiesReducer from './entitiesReducer'
 
 const lessonSchema = new schema.Entity('lessons')
 
@@ -14,7 +14,7 @@ describe('entities reducer', () => {
 
   it('should allow model creation', () => {
     store.dispatch({
-      type: types.MODEL_CREATE_OK,
+      type: '@@boxmodel/MODEL_CREATE_OK',
       payload: {
         entities: normalize({
           lesson: {
@@ -41,7 +41,7 @@ describe('entities reducer', () => {
     })
 
     store.dispatch({
-      type: types.MODEL_CREATE_OK,
+      type: '@@boxmodel/MODEL_CREATE_OK',
       payload: {
         entities: normalize({
           lesson: {
@@ -75,7 +75,7 @@ describe('entities reducer', () => {
 
   it('should allow model fetches and gets', () => {
     store.dispatch({
-      type: types.MODEL_FETCH_OK,
+      type: '@@boxmodel/MODEL_FETCH_OK',
       payload: {
         entities: normalize({
           lesson: [
@@ -107,7 +107,7 @@ describe('entities reducer', () => {
 
   it('should allow model updates', () => {
     store.dispatch({
-      type: types.MODEL_UPDATE,
+      type: '@@boxmodel/MODEL_UPDATE',
       payload: {
         entities: normalize({
           lesson: {
