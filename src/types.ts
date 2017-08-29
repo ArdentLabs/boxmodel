@@ -1,17 +1,13 @@
-import { ActionTuple, Options, Types } from '../index'
+import { ActionMap, Options, Types } from '../index'
 
-const createActionFactory = (modelName: string) => (operation: string): ActionTuple => {
+const createActionFactory = (modelName: string) => (operation: string): ActionMap => {
   const prefix = modelName.toUpperCase()
-  return [
-    `${prefix}_${operation}`,
-    `${prefix}_${operation}_OK`,
-    `${prefix}_${operation}_FAIL`,
-  ]
+  return {
+    request: `@@boxmodel/${prefix}_${operation}`,
+    ok: `@@boxmodel/${prefix}_${operation}_OK`,
+    fail: `@@boxmodel/${prefix}_${operation}_FAIL`,
+  }
 }
-
-export const getRequest = (actions: ActionTuple) => actions[0]
-export const getOk = (actions: ActionTuple) => actions[1]
-export const getFail = (actions: ActionTuple) => actions[2]
 
 export function generateTypes(options: Options): Types {
   const factory = createActionFactory(options.modelName)

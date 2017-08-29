@@ -7,14 +7,18 @@ import { RouteProps } from 'react-router'
 
 export type Schema = schema.Entity
 
-export type ActionTuple = [string, string, string]
+export interface ActionMap {
+  request: string
+  ok: string
+  fail: string
+}
 
 export interface Types {
-  get: ActionTuple
-  fetch: ActionTuple
-  create: ActionTuple
-  update: ActionTuple
-  archive: ActionTuple
+  get: ActionMap
+  fetch: ActionMap
+  create: ActionMap
+  update: ActionMap
+  archive: ActionMap
 }
 
 export interface Params {

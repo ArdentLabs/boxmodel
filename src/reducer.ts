@@ -1,4 +1,3 @@
-import { getRequest, getOk, getFail } from './types'
 import { ModelState, Action, Types, Reducer } from '../index'
 
 const initialState: ModelState = {
@@ -11,23 +10,23 @@ export function generateReducer(types: Types): Reducer {
   return (state: ModelState = initialState, action: Action) => {
     const { type, payload } = action
     switch (type) {
-      case getRequest(types.get):
-      case getRequest(types.fetch):
+      case types.get.request:
+      case types.fetch.request:
         return {
           ...state,
           loading: true,
         }
 
-      case getOk(types.get):
-      case getOk(types.fetch):
+      case types.get.ok:
+      case types.fetch.ok:
         return {
           ...state,
           error: null,
           loading: false,
         }
 
-      case getFail(types.get):
-      case getFail(types.fetch):
+      case types.get.fail:
+      case types.fetch.fail:
         return {
           ...state,
           error: payload.message || payload.toString() || 'Unknown error',

@@ -1,5 +1,4 @@
 import { Types, Actions } from '../index'
-import { getRequest } from './types'
 
 /**
  * Generates an object of Redux action creators for utilization in generic
@@ -13,27 +12,27 @@ import { getRequest } from './types'
  */
 export function generateActions(types: Types): Actions {
   const get = (id: string) => ({
-    type: getRequest(types.get),
+    type: types.get.request,
     payload: { id },
   })
 
   const fetch = () => ({
-    type: getRequest(types.fetch),
+    type: types.fetch.request,
     payload: {},
   })
 
   const create = (values: any) => ({
-    type: getRequest(types.create),
+    type: types.create.request,
     payload: { values },
   })
 
   const update = (id: string, values: any) => ({
-    type: getRequest(types.update),
+    type: types.update.request,
     payload: { id, values },
   })
 
   const archive = (id: string) => ({
-    type: getRequest(types.archive),
+    type: types.archive.request,
     payload: { id },
   })
 
