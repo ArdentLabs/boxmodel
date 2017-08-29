@@ -22,7 +22,8 @@ export default function generate(
   // from the API response.
   schema: Schema,
   // Pass optional parameters
-  options: Options = {},): BoxModel {
+  options: Options = {}
+): BoxModel {
   if (!modelName || typeof modelName !== 'string') {
     throw new TypeError('`modelName` has to be a string')
   }
@@ -32,7 +33,7 @@ export default function generate(
 
   const types = generateTypes(modelName)
   const actions = generateActions(modelName, types, schema)
-  const paths = generatePaths(modelName, pluralModelName, modelId)
+  const paths = generatePaths(modelName, pluralModelName)
   const reducer = generateReducer(modelName, types)
   const routes = generateRoutes(modelName, pluralModelName)
   const selectors = generateSelectors(modelName)
@@ -42,9 +43,11 @@ export default function generate(
     modelName,
     modelId,
     paths,
+    pluralModelName,
     reducer,
-    selectors,
+    routes,
     schema,
+    selectors,
     types,
     $$isBoxModel: true,
   }

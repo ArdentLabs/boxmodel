@@ -3,10 +3,12 @@
 // Definitions by: Sam Balana <sam.balana@ardentacademy.com>
 
 import { schema } from 'normalizr'
+import { RouteProps } from 'react-router'
 
 export type Schema = schema.Entity
 
 export type ActionTuple = [string, string, string]
+
 export interface Types {
   get: ActionTuple
   fetch: ActionTuple
@@ -15,17 +17,22 @@ export interface Types {
   archive: ActionTuple
 }
 
-export interface Params { [param: string]: string }
-export type PathFactory = (params: Params) => string
-export type Path = string | PathFactory
-export interface Paths {
-  fetch: string   // Path to view a list of existing models.
-  create: string  // Path to create a new model.
-  get: string     // Path to view an existing model.
-  edit: string    // Path to edit an existing model.
+export interface Params {
+  [param: string]: string
 }
 
-export interface Selectors {}
+export type PathFactory = (params: object) => string
+
+export interface Paths {
+  create: string  // Path to create a new model.
+  edit: string    // Path to edit an existing model.
+  fetch: string   // Path to view a list of existing models.
+  get: string     // Path to view an existing model.
+  reorder: string // Path to reorder existing models
+}
+
+export interface Selectors {
+}
 
 export interface ActionPayload {
   id?: string
@@ -78,15 +85,19 @@ export interface Props {
 
 export type Selector = (state: any, props: Props) => any
 
+export type Routes = Array<Partial<RouteProps>>
+
 export interface BoxModel {
-  modelName: string
-  modelId: string
-  schema: Schema
-  types: Types
-  paths: Paths
-  selectors: Selectors
   actions: Actions
+  modelId: string
+  modelName: string
+  paths: Paths
+  pluralModelName: string
   reducer: Reducer
+  routes: Routes
+  schema: Schema
+  selectors: Selectors
+  types: Types
   $$isBoxModel: true
 }
 

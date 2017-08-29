@@ -1,6 +1,6 @@
-import { Paths } from '../index'
+import { PathFactory, Paths } from '../index'
 
-const resolvePath = (path: string, absolute: boolean = true): string => {
+const createPath = (path: string, absolute?: boolean): PathFactory => (params) => {
   if (absolute && !path.startsWith('/')) {
     path = `/${path}`
   }
@@ -22,12 +22,18 @@ const resolvePath = (path: string, absolute: boolean = true): string => {
 export function generatePaths(
   name: string, // Name of the model
   pluralName: string, // Plural form of model's name
-  param: string, // Name of the URL parameter to select when getting
 ): Paths {
-  const fetch = resolvePath(`/${pluralName}/`)
-  const create = resolvePath(`add-${name}/`)
-  const get = resolvePath(`/${pluralName}/${name}Id/`)
-  const edit = resolvePath('/edit/')
+  const create = createPath(`add-${name}`)
+  const edit = createPath(`${pluralName}/${name}Id/edit`, true)
+  const fetch = createPath(`${pluralName}`, true)
+  const get = createPath(`${pluralName}/${name}Id`, true)
+  const reorder = createPath(`reorder-${pluralName}`)
 
-  return { fetch, create, get, edit }
+  return {
+    create,
+    edit,
+    fetch,
+    get,
+    reorder
+  }
 }

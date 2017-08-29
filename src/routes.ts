@@ -1,8 +1,9 @@
 import * as React from 'react'
 
 import { RouteProps } from 'react-router'
+import { Routes } from '../index'
 
-type RouteGenerator = (name: string, pluralName: string) => Array<Partial<RouteProps>>
+type RouteGenerator = (name: string, pluralName: string) => Routes
 
 export const generateRoutes: RouteGenerator = (name, pluralName) => {
   return [
