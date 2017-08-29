@@ -59,7 +59,6 @@ export interface BoxModel {
   modelName: string
   modelId: string
   schema: Schema
-  parent: BoxModel
   types: Types
   paths: Paths
   selectors: Selectors
@@ -69,5 +68,4 @@ export interface BoxModel {
 }
 
 export interface Options {
-  parent?: BoxModel
 }
