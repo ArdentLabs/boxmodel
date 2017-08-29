@@ -1,6 +1,10 @@
-import { PathFactory, Paths } from '../index'
+import { PathGenerator, Paths, Options } from '../index'
 
-const createPath = (path: string, absolute?: boolean): PathFactory => (params) => {
+type PathFactory = (getPath: PathGenerator, absolute?: boolean) => PathGenerator
+
+const createPathFactory: PathFactory = (getPath, absolute) => (id) => {
+  let path = getPath(id)
+
   if (absolute && !path.startsWith('/')) {
     path = `/${path}`
   }
@@ -19,15 +23,14 @@ const createPath = (path: string, absolute?: boolean): PathFactory => (params) =
 /**
  * Generate paths for client-side operations.
  */
-export function generatePaths(
-  name: string, // Name of the model
-  pluralName: string, // Plural form of model's name
-): Paths {
-  const create = createPath(`add-${name}`)
-  const edit = createPath(`${pluralName}/${name}Id/edit`, true)
-  const fetch = createPath(`${pluralName}`, true)
-  const get = createPath(`${pluralName}/${name}Id`, true)
-  const reorder = createPath(`reorder-${pluralName}`)
+export function generatePaths(options: Options): Paths {
+  const { modelName, pluralModelName } = options
+
+  const create = createPathFactory(() => `add-${modelName}`)
+  const edit = createPathFactory((id) => `${pluralModelName}/${id}/edit`, true)
+  const fetch = createPathFactory(() => `${pluralModelName}`, true)
+  const get = createPathFactory((id) => `${pluralModelName}/${id}`, true)
+  const reorder = createPathFactory(() => `reorder-${pluralModelName}`)
 
   return {
     create,
