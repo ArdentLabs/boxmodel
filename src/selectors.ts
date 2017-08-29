@@ -100,7 +100,7 @@ function join(model: any, joinWith: JoinWith | undefined, state: any) {
  */
 export function generateSelectors(options: Options): Selectors {
   const { modelName } = options
-  const path = `${modelName}s`
+  const path = options.pluralModelName
 
   /**
    * Get the identifier of the requested model
