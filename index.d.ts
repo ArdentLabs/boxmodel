@@ -55,6 +55,29 @@ export interface ModelState {
 
 export type Reducer = (state: ModelState, action: Action) => ModelState
 
+export interface JoinWith {
+  [modelName: string]: boolean | string | JoinWith
+}
+
+export type TransformFunc = (model: any) => any
+
+export interface Filters {
+  [filter: string]: any
+}
+
+export type SortFunc = (a: any, b: any, state: any) => boolean
+
+export interface Props {
+  params?: Params
+  model?: any
+  joinWith?: JoinWith
+  transform?: TransformFunc | TransformFunc[]
+  filters?: Filters,
+  sortBy: SortFunc,
+}
+
+export type Selector = (state: any, props: Props) => any
+
 export interface BoxModel {
   modelName: string
   modelId: string
