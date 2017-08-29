@@ -37,7 +37,6 @@ export default function generate(
     modelName,
     modelId,
     schema,
-    parent,
     types,
     paths,
     selectors,

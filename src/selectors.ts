@@ -90,49 +90,17 @@ function join(model, joinWith, state) {
 }
 
 /**
- * Utility for getFilteredModels
- */
-function runFiltersChild(parent: (Params) => BoxModel, model, filters, models) {
-  for (const key of Object.keys(filters)) {
-    const filter = filters[key]
-    const value = model[key]
-
-    if (typeof filter === 'object' && typeof value === 'object') {
-      if (!runFiltersChild(parent, value, filter, models)) {
-        return false
-      }
-    } else if (typeof filter === 'function') {
-      if (!filter(value, parent, models)) {
-        return false
-      }
-    } else if (value !== filter) {
-      return false
-    }
-  }
-
-  return true
-}
-
-function runFilters(model, filters, models) {
-  return runFiltersChild(model, model, filters, models)
-}
-
-/**
  * Generates an object containing a small list of selectors:
  *  - id:      Selects the id of the selected entity of this model type.
  *  - model:   Selects a single entity throught the URL params.
- *  - models:  Selects a list of entities based on the parent model.
  *  - loading: Selects a boolean describing the loading state of the request.
  *
  * @param  {string} modelName
  *         The singular modelName name for the model (e.g. 'user')
- * @param  {object} parent
- *         The state metadata of the parent model. This is used to select the
- *         correct child entities; otherwise, it selects everything.
  * @return {object}
  *         Generated selectors.
  */
-export default function generateSelectors(modelName, parent: () => BoxModel) {
+export function generateSelectors(modelName: string) {
   const path = `${modelName}s`
 
   /**
@@ -178,23 +146,6 @@ export default function generateSelectors(modelName, parent: () => BoxModel) {
       return result
     }
   )
-
-  /**
-   * Gather select data of the requested model's parent
-   */
-  const getParent = (state, props) => {
-    if (parent) {
-      const p = props.parent || parent(props.params)
-
-      return {
-        modelName: p.modelName,
-        modelId: p.modelId,
-        id: props.parentId || p.selectors.id(state, props),
-      }
-    }
-
-    return {}
-  }
 
   /**
    * Get an array of models.
@@ -251,13 +202,8 @@ export default function generateSelectors(modelName, parent: () => BoxModel) {
    */
   const getFilters = createSelector(
     getPropFilters,
-    getParent,
-    (propFilters, parentData) => {
+    (propFilters) => {
       const filters = []
-
-      if (parentData.id) {
-        filters.push((model) => model[parentData.modelId] === parentData.id)
-      }
 
       if (Array.isArray(propFilters)) {
         filters.push(...propFilters)
@@ -320,6 +266,5 @@ export default function generateSelectors(modelName, parent: () => BoxModel) {
     models: getFilteredModels, // getSortedModels,
     loading: getLoading,
     filters: getFilters,
-    parent: getParent,
   }
 }
