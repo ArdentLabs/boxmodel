@@ -187,7 +187,7 @@ export function generateSagas(options: Options, types: Types) {
 
       yield put({
         type: types.archive.ok,
-        payload: { id },
+        payload: { id, entityKey: pluralName },
       })
     } catch (err) {
       yield put({
