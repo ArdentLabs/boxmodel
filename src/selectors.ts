@@ -1,5 +1,5 @@
 import { createSelector } from 'reselect'
-import { JoinWith, Props, TransformFunc } from '../index'
+import { JoinWith, Props, TransformFunc, Options, Selectors } from '../index'
 
 /**
  * This is a recursive funciton that joins a model with child models.
@@ -94,17 +94,11 @@ function join(model: any, joinWith: JoinWith | undefined, state: any) {
 }
 
 /**
- * Generates an object containing a small list of selectors:
- *  - id:      Selects the id of the selected entity of this model type.
- *  - model:   Selects a single entity throught the URL params.
- *  - loading: Selects a boolean describing the loading state of the request.
- *
- * @param  {string} modelName
- *         The singular modelName name for the model (e.g. 'user')
- * @return {object}
- *         Generated selectors.
+ * Generates functions for selecting certain portions of the Redux state for a
+ * model type.
  */
-export function generateSelectors(modelName: string) {
+export function generateSelectors(options: Options): Selectors {
+  const { modelName } = options
   const path = `${modelName}s`
 
   /**

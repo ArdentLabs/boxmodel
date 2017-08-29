@@ -78,17 +78,32 @@ export interface Props {
 
 export type Selector = (state: any, props: Props) => any
 
+export interface Sagas {
+}
+
 export interface BoxModel {
-  modelName: string
-  modelId: string
-  schema: Schema
-  types: Types
-  paths: Paths
-  selectors: Selectors
-  actions: Actions
-  reducer: Reducer
   $$isBoxModel: true
+  actions: Actions
+  modelId: string
+  modelName: string
+  paths: Paths
+  reducer: Reducer
+  sagas: Sagas
+  schema: Schema
+  selectors: Selectors
+  types: Types
 }
 
 export interface Options {
+  // Singularized, camelCase name for the model.
+  modelName: string
+
+  // Normalizr schema used for normalizing the result from the GraphQL server.
+  schema: Schema
+
+  // URL of the GraphQL server you want to talk to.
+  apiUrl: string
+
+  // GraphQL fields you wish to use in your application.
+  fields: string
 }

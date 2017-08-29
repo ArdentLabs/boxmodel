@@ -2,6 +2,7 @@ import { generateTypes } from './types'
 import { generatePaths } from './paths'
 import { generateSelectors } from './selectors'
 import { generateActions } from './actions'
+import { generateSagas } from './sagas'
 import { generateReducer } from './reducer'
 
 import { BoxModel, Schema, Options } from '../index'
@@ -12,36 +13,31 @@ import { BoxModel, Schema, Options } from '../index'
  * reducers, URL paths, and selectors. By eliminating code repetition, this
  * generation of metadata reduces human error.
  */
-export default function generate(
-  // The name of the model (in SINGULAR form).
-  modelName: string,
-  // The normalizr schema object that will be used for normalizing the result
-  // from the API response.
-  schema: Schema,
-  // Pass optional parameters
-  options: Options = {},
-): BoxModel {
+export default function generate(options: Options): BoxModel {
   if (!modelName || typeof modelName !== 'string') {
     throw new TypeError('`modelName` has to be a string')
   }
 
   const modelId = `${modelName}Id`
 
-  const types = generateTypes(modelName)
-  const paths = generatePaths(modelName, modelId)
-  const selectors = generateSelectors(modelName)
-  const actions = generateActions(modelName, types, schema)
-  const reducer = generateReducer(modelName, types)
+  const types = generateTypes(options)
+  const paths = generatePaths(options, modelId)
+  const actions = generateActions(options, types)
+  const sagas = generateSagas(options, types)
+
+  const reducer = generateReducer(options, types)
+  const selectors = generateSelectors(options)
 
   return {
-    modelName,
-    modelId,
-    schema,
-    types,
-    paths,
-    selectors,
-    actions,
-    reducer,
     $$isBoxModel: true,
+    actions,
+    modelId,
+    modelName,
+    paths,
+    reducer,
+    sagas,
+    schema,
+    selectors,
+    types,
   }
 }

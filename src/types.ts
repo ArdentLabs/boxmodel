@@ -1,4 +1,4 @@
-import { ActionTuple, Types } from '../index'
+import { ActionTuple, Options, Types } from '../index'
 
 const createActionFactory = (modelName: string) => (operation: string): ActionTuple => {
   const prefix = modelName.toUpperCase()
@@ -13,8 +13,8 @@ export const getRequest = (actions: ActionTuple) => actions[0]
 export const getOk = (actions: ActionTuple) => actions[1]
 export const getFail = (actions: ActionTuple) => actions[2]
 
-export function generateTypes(modelName: string): Types {
-  const factory = createActionFactory(modelName)
+export function generateTypes(options: Options): Types {
+  const factory = createActionFactory(options.modelName)
 
   const get = factory('GET')
   const fetch = factory('FETCH')
