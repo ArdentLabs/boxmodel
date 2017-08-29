@@ -2,7 +2,6 @@ import { all, call, put, takeLatest } from 'redux-saga/effects'
 import { goBack } from './actions'
 import { normalize } from 'normalizr'
 import { Types, Action, Options } from '../index'
-import { getRequest, getOk, getFail } from './types'
 
 export function generateSagas(options: Options, types: Types) {
   const { schema, apiUrl, fields } = options
@@ -60,12 +59,12 @@ export function generateSagas(options: Options, types: Types) {
       const normalized = normalize(res.data[name], schema)
 
       yield put({
-        type: getOk(types.get),
+        type: types.get.ok,
         payload: normalized,
       })
     } catch (err) {
       yield put({
-        type: getFail(types.get),
+        type: types.get.fail,
         payload: err,
         error: true,
       })
@@ -88,12 +87,12 @@ export function generateSagas(options: Options, types: Types) {
       const normalized = normalize(res.data[pluralName], [schema])
 
       yield put({
-        type: getOk(types.fetch),
+        type: types.fetch.ok,
         payload: normalized,
       })
     } catch (err) {
       yield put({
-        type: getFail(types.fetch),
+        type: types.fetch.fail,
         payload: err,
         error: true,
       })
@@ -117,7 +116,7 @@ export function generateSagas(options: Options, types: Types) {
       const normalized = normalize(model, schema)
 
       yield put({
-        type: getOk(types.create),
+        type: types.create.ok,
         payload: normalized,
       })
 
@@ -125,7 +124,7 @@ export function generateSagas(options: Options, types: Types) {
       yield put(goBack())
     } catch (err) {
       yield put({
-        type: getFail(types.create),
+        type: types.create.fail,
         payload: err,
         error: true,
       })
@@ -152,7 +151,7 @@ export function generateSagas(options: Options, types: Types) {
       const normalized = normalize(res.data[`update${title}`], schema)
 
       yield put({
-        type: getOk(types.update),
+        type: types.update.ok,
         payload: normalized,
       })
 
@@ -161,7 +160,7 @@ export function generateSagas(options: Options, types: Types) {
     } catch (err) {
       console.error(err)
       yield put({
-        type: getFail(types.update),
+        type: types.update.fail,
         payload: err,
         error: true,
       })
@@ -187,12 +186,12 @@ export function generateSagas(options: Options, types: Types) {
       yield call(callApi, archiveQuery, { id })
 
       yield put({
-        type: getOk(types.archive),
+        type: types.archive.ok,
         payload: { id },
       })
     } catch (err) {
       yield put({
-        type: getFail(types.archive),
+        type: types.archive.fail,
         payload: err,
         error: true,
       })
@@ -201,11 +200,11 @@ export function generateSagas(options: Options, types: Types) {
 
   function* rootSaga() {
     yield all([
-      takeLatest(getRequest(types.get), getModel),
-      takeLatest(getRequest(types.fetch), fetchModel),
-      takeLatest(getRequest(types.create), createModel),
-      takeLatest(getRequest(types.update), updateModel),
-      takeLatest(getRequest(types.archive), archiveModel),
+      takeLatest(types.get.request, getModel),
+      takeLatest(types.fetch.request, fetchModel),
+      takeLatest(types.create.request, createModel),
+      takeLatest(types.update.request, updateModel),
+      takeLatest(types.archive.request, archiveModel),
     ])
   }
 

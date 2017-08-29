@@ -2,7 +2,12 @@
   "name": "boxmodel",
   "version": "1.0.0",
   "description": "API to abstract models, generating common functionality",
-  "main": "index.js",
+  "main": "dist/index.js",
+  "typings": "index.d.ts",
+  "files": [
+    "dist",
+    "index.d.ts"
+  ],
   "scripts": {
     "start": "mocha -w --watch-extensions ts -r ts-node/register src/**/*.spec.ts",
     "build": "tsc",
@@ -19,18 +24,18 @@
     "redux": "^3.7.2",
     "redux-saga": "^0.15.6",
     "reselect": "^3.0.1",
-    "sort-obj-array": "^1.3.1"
+    "sort-obj-array": "^1.3.2"
   },
   "devDependencies": {
     "@types/deepmerge": "^1.3.1",
     "@types/mocha": "^2.2.42",
-    "@types/node": "^8.0.25",
+    "@types/node": "^8.0.26",
     "@types/pluralize": "^0.0.27",
     "@types/react-router": "^4.0.15",
     "history": "^4.7.2",
     "mocha": "^3.5.0",
     "ts-node": "^3.3.0",
     "tslint": "^5.7.0",
-    "typescript": "^2.6.0-dev.20170829"
+    "typescript": "^2.4.2"
   }
 }
