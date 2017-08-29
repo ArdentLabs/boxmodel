@@ -1,5 +1,6 @@
 import { createSelector } from 'reselect'
 import { JoinWith, Props, TransformFunc, Options, Selectors } from '../index'
+import sort from 'sort-obj-array'
 
 /**
  * This is a recursive funciton that joins a model with child models.
@@ -251,7 +252,7 @@ export function generateSelectors(options: Options): Selectors {
         case 'object':
         case 'string':
         case 'function':
-          // return sort(models, sortBy)
+          return sort(models, sortBy)
         default:
           return models
       }
@@ -261,7 +262,7 @@ export function generateSelectors(options: Options): Selectors {
   return {
     id: getId,
     model: getJoinedModel,
-    models: getFilteredModels, // getSortedModels,
+    models: getSortedModels,
     loading: getLoading,
     filters: getFilters,
   }
