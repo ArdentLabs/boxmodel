@@ -22,14 +22,14 @@ export default function generate(options: Options): BoxModel {
   }
 
   const { modelName, pluralModelName } = options
+  const paths = generatePaths(options)
+  const routes = generateRoutes(options)
+  const selectors = generateSelectors(options)
   const types = generateTypes(options)
 
   const actions = generateActions(types)
-  const paths = generatePaths(options)
   const reducer = generateReducer(types)
-  const routes = generateRoutes(options)
-  const sagas = generateSagas(options, types)
-  const selectors = generateSelectors(options)
+  const sagas = generateSagas(options, types, paths)
 
   return {
     $$isBoxModel: true,
