@@ -35,7 +35,13 @@ export interface Paths {
   reorder: PathGenerator // Path to reorder existing models
 }
 
-export interface Selectors {
+export interface Selectors<EntityType> {
+  getId: (_: any, props: Props) => string
+  getLoading: (state: any) => boolean
+  getEntities: (state: any) => {
+      [id: string]: EntityType
+  }
+  getModel: (state: any) => EntityType
 }
 
 export interface ActionPayload {
@@ -96,7 +102,7 @@ export interface Sagas {
 
 export type Routes = Partial<RouteProps>[]
 
-export interface BoxModel {
+export interface BoxModel<EntityType> {
   $$isBoxModel: true
   actions: Actions
   modelName: string
@@ -105,7 +111,7 @@ export interface BoxModel {
   reducer: Reducer
   routes: Routes
   sagas: Sagas
-  selectors: Selectors
+  selectors: Selectors<EntityType>
   types: Types
 }
 
