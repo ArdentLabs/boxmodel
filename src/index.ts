@@ -30,7 +30,7 @@ export default function generate(input: InputOptions): BoxModel {
 
   const actions = generateActions(types)
   const reducer = generateReducer(types)
-  const sagas = generateSagas(options, types, paths)
+  const sagas = generateSagas(options, types)
 
   return {
     $$isBoxModel: true,

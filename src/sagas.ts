@@ -1,10 +1,10 @@
-import { all, call, put, select, takeLatest } from 'redux-saga/effects'
-import { push } from 'react-router-redux'
+import { all, call, put, takeLatest } from 'redux-saga/effects'
+import { goBack } from './actions'
 import { normalize } from 'normalizr'
-import { Types, Action, Options, Paths } from '../index'
+import { Types, Action, Options } from '../index'
 import { getRequest, getOk, getFail } from './types'
 
-export function generateSagas(options: Options, types: Types, paths: Paths) {
+export function generateSagas(options: Options, types: Types) {
   const { schema, apiUrl, fields } = options
   const name = options.modelName
   const title = name.substr(0, 1).toUpperCase() + name.substr(1)
@@ -113,19 +113,16 @@ export function generateSagas(options: Options, types: Types, paths: Paths) {
       const { values } = action.payload
 
       const res = yield call(callApi, createQuery, { input: values })
-      const normalized = normalize(res.data[`create${title}`], schema)
+      const model = res.data[`create${title}`]
+      const normalized = normalize(model, schema)
 
       yield put({
         type: getOk(types.create),
         payload: normalized,
       })
 
-      // Redirect to detailed page
-      const previous = yield select((state: any) =>
-        state.router && state.router.location && state.router.location.state
-      )
-      const { from } = previous || { from: { pathname: `/${pluralName}/` + id } }
-      yield put(push(from))
+      // Redirect to previous page
+      yield put(goBack())
     } catch (err) {
       yield put({
         type: getFail(types.create),
@@ -160,11 +157,7 @@ export function generateSagas(options: Options, types: Types, paths: Paths) {
       })
 
       // Redirect to previous page
-      const previous = yield select((state: any) =>
-        state.router && state.router.location && state.router.location.state
-      )
-      const { from } = previous || { from: { pathname: `/${pluralName}/` + id } }
-      yield put(push(from))
+      yield put(goBack())
     } catch (err) {
       console.error(err)
       yield put({

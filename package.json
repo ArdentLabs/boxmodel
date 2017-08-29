@@ -16,7 +16,6 @@
     "deepmerge": "^1.5.1",
     "normalizr": "^3.2.3",
     "pluralize": "^7.0.0",
-    "react-router-redux": "next",
     "redux": "^3.7.2",
     "redux-saga": "^0.15.6",
     "reselect": "^3.0.1"
@@ -27,7 +26,6 @@
     "@types/node": "^8.0.25",
     "@types/pluralize": "^0.0.27",
     "@types/react-router": "^4.0.15",
-    "@types/react-router-redux": "^5.0.7",
     "history": "^4.7.2",
     "mocha": "^3.5.0",
     "ts-node": "^3.3.0",
