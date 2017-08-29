@@ -110,7 +110,7 @@ export interface Options {
   modelName: string
 
   // Plural, camelCase name for the model.
-  pluralModelName: string
+  pluralModelName?: string
 
   // Normalizr schema used for normalizing the result from the GraphQL server.
   schema: Schema
