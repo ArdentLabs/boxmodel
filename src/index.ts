@@ -8,7 +8,7 @@ import { generateSagas } from './sagas'
 import { generateReducer } from './reducer'
 
 import { BoxModelOptions, Box, InputOptions, Options, EntitiesReducer } from '../index'
-import { generateRoutes } from './routes'
+import { generateRouteFactory } from './routes'
 
 export default class BoxModel {
   public reducer: EntitiesReducer
@@ -34,7 +34,7 @@ export default class BoxModel {
 
     const { modelName } = options
     const paths = generatePaths(options)
-    const routes = generateRoutes(options)
+    const routes = generateRouteFactory(options)
     const selectors = generateSelectors<Model>(options)
     const types = generateTypes(options)
 

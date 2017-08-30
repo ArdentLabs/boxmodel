@@ -106,9 +106,9 @@ export interface ModelState {
 
 export type Schema = schema.Entity
 
-export type RouteFactory = (options: RouteOptions) => [Route, Route, Route, Route, Route, Route]
+export type RouteFactory = (components: RouteComponents) => Route[]
 
-export interface RouteOptions {
+export interface RouteComponents {
   Table: any
   Create: any
   Reorder: any
