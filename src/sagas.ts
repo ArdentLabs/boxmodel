@@ -95,13 +95,18 @@ export function generateSagas(options: Options, types: Types) {
 
       const tokens = router.split('/')
 
-      if (tokens.length === 3) {
-        // URL matches: /:parentTitle/:parentId/:modelType
-        const parentType
+
+      if (tokens.length === 4) {
+        // URL matches /:parentName/:parentId/:modelName
+        const parentName = tokens[1]
+        const parentId = tokens[2]
+        // Filter by the parent
+        filter[`${parentName}Id`] = parentId
+      } else if (tokens.length === 2) {
+        // URL matches /:modelName
+      } else {
+        throw new Error('Unknown URL format, cannot determine if there is a parent')
       }
-      const parent = tokens.length === 3
-        ? tokens[1]
-        : null
 
       const res = yield call(callApi, fetchQuery, { sort, filter, page })
       const normalized = normalize(res.data[pluralName], [schema])

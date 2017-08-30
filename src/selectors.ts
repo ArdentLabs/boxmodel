@@ -115,7 +115,8 @@ export function generateSelectors<Model>(options: Options): Selectors<Model> {
     if (state.router && state.router.location && state.router.location.pathname) {
       const tokens = state.router.location.pathname.split('/')
       if (tokens.length === 3) {
-        return tokens[2]
+        // URL matches /:modelName/:id
+        return tokens[3]
       }
     }
     throw new Error('ID not found')
