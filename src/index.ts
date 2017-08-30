@@ -16,7 +16,7 @@ import { generateRoutes } from './routes'
  * reducers, URL paths, and selectors. By eliminating code repetition, this
  * generation of metadata reduces human error.
  */
-export default function generate(input: InputOptions): BoxModel {
+export default function generate<Model>(input: InputOptions): BoxModel<Model> {
   const options: Options = {
     ...input,
     pluralModelName: input.pluralModelName || pluralize(input.modelName),
@@ -26,10 +26,10 @@ export default function generate(input: InputOptions): BoxModel {
   const { modelName, pluralModelName } = options
   const paths = generatePaths(options)
   const routes = generateRoutes(options)
-  const selectors = generateSelectors(options)
+  const selectors = generateSelectors<Model>(options)
   const types = generateTypes(options)
 
-  const actions = generateActions(types)
+  const actions = generateActions<Model>(types)
   const reducer = generateReducer(types)
   const sagas = generateSagas(options, types)
 

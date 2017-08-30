@@ -1,25 +1,17 @@
 import * as deepmerge from 'deepmerge'
 
-import { Action } from '../index'
-
-interface State {
-  [entity: string]: {
-    [id: string]: {
-      [field: string]: any,
-    },
-  }
-}
+import { EntitiesState, Action } from '../index'
 
 interface ModelAction extends Action {
   type: string
   payload: {
-    entities: Partial<State>
+    entities: EntitiesState
     entityKey?: string
     id?: string
   }
 }
 
-export default (state: State = {}, action: ModelAction): State => {
+export default (state: EntitiesState = {}, action: ModelAction): EntitiesState => {
   const { type, payload } = action
 
   if (!type.startsWith('@@boxmodel/')) {
@@ -47,7 +39,7 @@ export default (state: State = {}, action: ModelAction): State => {
     }
   }
   else if (type.endsWith('_OK') || type.endsWith('_UPDATE')) {
-    return deepmerge(state, payload.entities)
+    return deepmerge(state, payload.entities) as EntitiesState
   }
 
   return state

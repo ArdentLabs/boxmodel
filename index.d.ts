@@ -3,7 +3,8 @@
 // Definitions by: Sam Balana <sam.balana@ardentacademy.com>
 
 import { schema } from 'normalizr'
-import { RouteProps } from 'react-router'
+import { RouteProps, match } from 'react-router'
+import { RouterState } from 'react-router-redux'
 
 export type Schema = schema.Entity
 
@@ -21,10 +22,6 @@ export interface Types {
   archive: ActionMap
 }
 
-export interface Params {
-  [param: string]: string
-}
-
 export type PathGenerator = (id: string) => string
 
 export interface Paths {
@@ -35,13 +32,16 @@ export interface Paths {
   reorder: PathGenerator // Path to reorder existing models
 }
 
-export interface Selectors {
-  getId: (_: any, props: Props) => string
-  getLoading: (state: any) => boolean
-  getEntities: (state: any) => {
-      [id: string]: any
-  }
-  getModel: (state: any) => any
+export interface Filters {
+  [filter: string]: any
+}
+
+export interface Selectors<Model> {
+  id: any
+  loading: any
+  model: any
+  models: any
+  filters: (state: any, props: any) => Filters
 }
 
 export interface ActionPayload {
@@ -58,12 +58,12 @@ export interface Action {
   payload: ActionPayload
 }
 
-export interface Actions {
-  get: (id: string, params: Params) => Action
-  fetch: (params: Params) => Action
-  create: (data: any, params: Params) => Action
-  update: (id: string, data: any, params: Params) => Action
-  archive: (id: string, params: Params) => Action
+export interface Actions<Model> {
+  get: (id: string) => Action
+  fetch: () => Action
+  create: (data: Model) => Action
+  update: (id: string, data: Partial<Model>) => Action
+  archive: (id: string) => Action
 }
 
 export interface ModelState {
@@ -78,41 +78,52 @@ export interface JoinWith {
   [modelName: string]: boolean | string | JoinWith
 }
 
-export type TransformFunc = (model: any) => any
+export type TransformFunc<Model> = (model: Model) => any
 
-export interface Filters {
-  [filter: string]: any
+export type SortFunc<Model> = (a: Model, b: Model, state: any) => boolean
+
+export interface Params {
+  id?: string
+  parentId?: string
+  parentModel?: string
 }
 
-export type SortFunc = (a: any, b: any, state: any) => boolean
-
-export interface Props {
-  params?: Params
-  model?: any
+export interface Props<Model> {
+  id?: string
+  match: match<Params>
+  model?: Model
   joinWith?: JoinWith
-  transform?: TransformFunc | TransformFunc[]
+  transform?: TransformFunc<Model> | TransformFunc<Model>[]
   filters?: Filters,
-  sortBy: SortFunc,
+  sortBy: SortFunc<Model>,
 }
 
-export type Selector = (state: any, props: Props) => any
+export type Selector<Model> = (state: any, props: Props<Model>) => any
 
 export interface Sagas {
 }
 
 export type Routes = Partial<RouteProps>[]
 
-export interface BoxModel {
+export interface BoxModel<Model> {
   $$isBoxModel: true
-  actions: Actions
+  actions: Actions<Model>
   modelName: string
   paths: Paths
   pluralModelName: string
   reducer: Reducer
   routes: Routes
   sagas: Sagas
-  selectors: Selectors
+  selectors: Selectors<Model>
   types: Types
+}
+
+interface EntitiesState {
+  [modelType: string]: ModelEntities<any>
+}
+
+interface ModelEntities<Model> {
+  [id: string]: Model
 }
 
 export interface InputOptions {
@@ -132,7 +143,7 @@ export interface InputOptions {
   fields: string
 
   // Selects the entities reducer exposed by boxmodel.
-  entitiesSelector?: (state: any) => any
+  entitiesSelector?: (state: any) => EntitiesState
 }
 
 export interface Options extends InputOptions {
@@ -140,5 +151,11 @@ export interface Options extends InputOptions {
   pluralModelName: string
 
   // Selects the entities reducer exposed by boxmodel.
-  entitiesSelector: (state: any) => any
+  entitiesSelector: (state: any) => EntitiesState
+}
+
+export interface State {
+  entities?: EntitiesState
+  router?: RouterState
+  [modelTitle: string]: any
 }

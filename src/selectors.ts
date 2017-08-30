@@ -1,5 +1,5 @@
 import { createSelector } from 'reselect'
-import { JoinWith, Props, TransformFunc, Options, Selectors } from '../index'
+import { State, JoinWith, Props, TransformFunc, Options, Selectors } from '../index'
 import sort from 'sort-obj-array'
 
 /**
@@ -28,7 +28,7 @@ import sort from 'sort-obj-array'
  * @return {object}
  *         The final model object, with all joined models merged in
  */
-function join(model: any, joinWith: JoinWith | undefined, state: any) {
+function join<Model>(model: any, joinWith: JoinWith | undefined, state: State) {
   if (!model || !joinWith) {
     return model
   }
@@ -60,7 +60,7 @@ function join(model: any, joinWith: JoinWith | undefined, state: any) {
 
           // Nested object recursion
           if (typeof value === 'object') {
-            return join(entity, value, state)
+            return join<Model>(entity, value, state)
           }
 
           return entity
@@ -73,7 +73,7 @@ function join(model: any, joinWith: JoinWith | undefined, state: any) {
               result[key] = state[`${key}s`].entities[submodel]
             } else {
               // Nested object recursion
-              result[key] = join(submodel, value as JoinWith, state)
+              result[key] = join<Model>(submodel, value as JoinWith, state)
             }
             break
           case 'string':
@@ -98,21 +98,33 @@ function join(model: any, joinWith: JoinWith | undefined, state: any) {
  * Generates functions for selecting certain portions of the Redux state for a
  * model type.
  */
-export function generateSelectors(options: Options): Selectors {
-  const { modelName, entitiesSelector, pluralModelName } = options
+export function generateSelectors<Model>(options: Options): Selectors<Model> {
+  const { entitiesSelector, pluralModelName } = options
   const path = options.pluralModelName
 
   /**
    * Get the identifier of the requested model
    */
-  const getId = (_: any, props: Props) =>
-    (props.params && props.params[`${modelName}Id`])
-    || (props.model && props.model[modelName])
+  const getId = (state: State, props: Props<Model>) => {
+    if (props.id) {
+      return props.id
+    }
+    if (props.match && props.match.params && props.match.params.id) {
+      return props.match.params.id
+    }
+    if (state.router && state.router.location && state.router.location.pathname) {
+      const tokens = state.router.location.pathname.split('/')
+      if (tokens.length === 3) {
+        return tokens[2]
+      }
+    }
+    throw new Error('ID not found')
+  }
 
   /**
    * Get the loading state of the requested model type
    */
-  const getLoading = (state: any) => state[path].loading
+  const getLoading = (state: State) => state[path] && state[path].loading
 
   /**
    * Get all the models of the requested type
@@ -134,7 +146,7 @@ export function generateSelectors(options: Options): Selectors {
   /**
    * Get the join parameters (props.joinWith)
    */
-  const getJoinWith = (_: any, props: Props) => props.joinWith
+  const getJoinWith = (_: State, props: Props<Model>) => props.joinWith
 
   /**
    * Get the requested model, joind with the data within
@@ -144,7 +156,7 @@ export function generateSelectors(options: Options): Selectors {
     getJoinWith,
     (state) => state,
     (model, joinWith, state) => {
-      const result = join(model, joinWith, state)
+      const result = join<Model>(model, joinWith, state)
       return result
     }
   )
@@ -169,14 +181,14 @@ export function generateSelectors(options: Options): Selectors {
     (state) => state,
     (models, joinWith, state) =>
       models.map((model) =>
-        join(model, joinWith, state)
+        join<Model>(model, joinWith, state)
       )
   )
 
   /**
    * Get any desired mutation functions (props.mutate)
    */
-  const getTransformations = (_: any, props: Props) => {
+  const getTransformations = (_: State, props: Props<Model>) => {
     const { transform } = props
     return transform ? [transform] : []
   }
@@ -187,7 +199,7 @@ export function generateSelectors(options: Options): Selectors {
     (models, transformations) => {
       if (transformations.length) {
         return models.map((model) =>
-          transformations.reduce((prev, curr: TransformFunc) => curr(prev), model)
+          transformations.reduce((prev, curr: TransformFunc<Model>) => curr(prev), model)
         )
       }
       return models
@@ -197,7 +209,7 @@ export function generateSelectors(options: Options): Selectors {
   /**
    * Get provided filtering parameters
    */
-  const getPropFilters = (_: any, props: Props) => props.filters
+  const getPropFilters = (_: State, props: Props<Model>) => props.filters
 
   /**
    * Generate the filtering parameters
@@ -236,10 +248,10 @@ export function generateSelectors(options: Options): Selectors {
   /**
    * Get the sorting parameters (props.sortBy)
    */
-  const getSortBy = (state: any, props: Props) => {
+  const getSortBy = (state: State, props: Props<Model>) => {
     const { sortBy } = props
     return typeof sortBy === 'function'
-      ? (a: any, b: any) => sortBy(a, b, state)
+      ? (a: Model, b: Model) => sortBy(a, b, state)
       : sortBy
   }
 
@@ -264,9 +276,9 @@ export function generateSelectors(options: Options): Selectors {
 
   return {
     id: getId,
+    loading: getLoading,
     model: getJoinedModel,
     models: getSortedModels,
-    loading: getLoading,
     filters: getFilters,
   }
 }

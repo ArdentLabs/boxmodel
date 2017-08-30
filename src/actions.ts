@@ -10,7 +10,7 @@ import { Types, Actions } from '../index'
  * @return
  *         (get, fetch, create, search, update, reorder, and destroy)
  */
-export function generateActions(types: Types): Actions {
+export function generateActions<Model>(types: Types): Actions<Model> {
   const get = (id: string) => ({
     type: types.get.request,
     payload: { id },

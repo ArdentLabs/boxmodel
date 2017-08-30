@@ -11,10 +11,10 @@ export function generateRoutes(options: Options): Routes {
       path:`/:parentModel/:parentId/reorder-${pluralName}`
     },
     {
-      path:`/${pluralName}/:${name}Id/edit`,
+      path:`/${pluralName}/:id/edit`,
     },
     {
-      path:`/${pluralName}/:${name}Id`,
+      path:`/${pluralName}/:id`,
     },
     {
       path:`/${pluralName}`,
