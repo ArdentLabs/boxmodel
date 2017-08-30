@@ -8,10 +8,6 @@ describe('generate()', () => {
     modelName: 'car',
     schema: new schema.Entity('cars'),
     apiUrl: 'localhost:3000',
-    fields: `
-      make
-      model
-    `,
   }
 
   const res = generate(options)

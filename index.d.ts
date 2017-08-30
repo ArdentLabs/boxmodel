@@ -18,9 +18,6 @@ export interface InputOptions {
   // URL of the GraphQL server you want to talk to.
   apiUrl: string
 
-  // GraphQL fields you wish to use in your application.
-  fields: string
-
   // Selects the entities reducer exposed by boxmodel.
   entitiesSelector?: (state: any) => EntitiesState
 }
@@ -38,11 +35,11 @@ export interface BoxModel<Model> {
 }
 
 export interface Actions<Model> {
-  get: (id: string) => Action
-  fetch: (options?: FetchOptions) => Action
-  create: (data: Model) => Action
-  update: (id: string, data: Partial<Model>) => Action
-  archive: (id: string) => Action
+  get: (id: string, fields: string) => Action
+  fetch: (fields: string, options?: FetchOptions) => Action
+  create: (data: Model, fields: string) => Action
+  update: (id: string, data: Partial<Model>, fields: string) => Action
+  archive: (id: string, fields?: string) => Action
 }
 
 export interface Action {
@@ -58,6 +55,9 @@ export interface ActionPayload {
   sorts?: any
   values?: any
   variables?: any
+
+  // GraphQL fields you wish to use in your application.
+  fields?: any
 }
 
 export interface FetchOptions {

@@ -6,7 +6,7 @@ import { goBack } from './actions'
 import { Types, Action, Options, State } from '../index'
 
 export function generateSagas(options: Options, types: Types) {
-  const { modelName, schema, apiUrl, fields } = options
+  const { modelName, schema, apiUrl } = options
   const name = modelName
   const pluralName = pluralize(modelName)
 
@@ -42,21 +42,26 @@ export function generateSagas(options: Options, types: Types) {
     }
   }
 
-  const getQuery = `
-    query Get${title}($id: ID!) {
-      ${name}(id: $id) {
-        ${fields}
-      }
-    }
-  `
 
   function* getModel(action: Action) {
     try {
-      const { id } = action.payload
+      const { id, fields } = action.payload
 
       if (!id) {
         throw new Error(`ID required for reading a single ${title}`)
       }
+
+      if (!fields) {
+        throw new Error(`Fields required for reading a single ${title}`)
+      }
+
+      const getQuery = `
+        query Get${title}($id: ID!) {
+          ${name}(id: $id) {
+            ${fields}
+          }
+        }
+      `
 
       const res = yield call(callApi, getQuery, { id })
       const normalized = normalize(res.data[name], schema)
@@ -74,17 +79,14 @@ export function generateSagas(options: Options, types: Types) {
     }
   }
 
-  const fetchQuery = `
-    query Fetch${title}($filter: Filters, $sort: Sorts) {
-      ${pluralName}(filter: $filter, sort: $sort) {
-        ${fields}
-      }
-    }
-  `
-
   function* fetchModel(action: Action) {
     try {
-      const { variables } = action.payload
+      const { variables, fields } = action.payload
+
+      if (!fields) {
+        throw new Error(`Fields required for reading several ${title}`)
+      }
+
       const sort = variables.sort || {}
       const filter = variables.filter || {}
       const page = variables.page || {}
@@ -94,7 +96,6 @@ export function generateSagas(options: Options, types: Types) {
       )
 
       const tokens = router.split('/')
-
 
       if (tokens.length === 4) {
         // URL matches /:parentName/:parentId/:modelName
@@ -107,6 +108,14 @@ export function generateSagas(options: Options, types: Types) {
       } else {
         throw new Error('Unknown URL format, cannot determine if there is a parent')
       }
+
+      const fetchQuery = `
+        query Fetch${title}($filter: Filters, $sort: Sorts) {
+          ${pluralName}(filter: $filter, sort: $sort) {
+            ${fields}
+          }
+        }
+      `
 
       const res = yield call(callApi, fetchQuery, { sort, filter, page })
       const normalized = normalize(res.data[pluralName], [schema])
@@ -124,17 +133,21 @@ export function generateSagas(options: Options, types: Types) {
     }
   }
 
-  const createQuery = `
-    mutation Create${title}($input: Create${title}Input!) {
-      create${title}(input: $input) {
-        ${fields}
-      }
-    }
-  `
-
   function* createModel(action: Action) {
     try {
-      const { values } = action.payload
+      const { values, fields } = action.payload
+
+      if (!fields) {
+        throw new Error(`Fields required for creating a ${title}`)
+      }
+
+      const createQuery = `
+        mutation Create${title}($input: Create${title}Input!) {
+          create${title}(input: $input) {
+            ${fields}
+          }
+        }
+      `
 
       const res = yield call(callApi, createQuery, { input: values })
       const model = res.data[`create${title}`]
@@ -156,21 +169,25 @@ export function generateSagas(options: Options, types: Types) {
     }
   }
 
-  const updateQuery = `
-    mutation Update${title}($input: Update${title}Input!) {
-      update${title}(input: $input) {
-        ${fields}
-      }
-    }
-  `
-
   function* updateModel(action: Action) {
     try {
-      const { id, values } = action.payload
+      const { id, values, fields } = action.payload
 
       if (!id) {
-        throw new Error(`ID required for updating ${title}`)
+        throw new Error(`ID required for updating a ${title}`)
       }
+
+      if (!fields) {
+        throw new Error(`Fields required for updating a ${title}`)
+      }
+
+      const updateQuery = `
+        mutation Update${title}($input: Update${title}Input!) {
+          update${title}(input: $input) {
+            ${fields}
+          }
+        }
+      `
 
       const res = yield call(callApi, updateQuery, { input: { id, ...values }})
       const normalized = normalize(res.data[`update${title}`], schema)
@@ -192,21 +209,25 @@ export function generateSagas(options: Options, types: Types) {
     }
   }
 
-  const archiveQuery = `
-    mutation Archive${title}($id: ID!) {
-      archive${title}(id: $id) {
-        ${fields}
-      }
-    }
-  `
-
   function* archiveModel(action: Action) {
     try {
-      const { id } = action.payload
+      const { id, fields } = action.payload
 
       if (!id) {
-        throw new Error(`ID required for archiving ${title}`)
+        throw new Error(`ID required for archiving a ${title}`)
       }
+
+      if (!fields) {
+        throw new Error(`ID required for archiving a ${title}`)
+      }
+
+      const archiveQuery = `
+        mutation Archive${title}($id: ID!) {
+          archive${title}(id: $id) {
+            ${fields}
+          }
+        }
+      `
 
       yield call(callApi, archiveQuery, { id })
 

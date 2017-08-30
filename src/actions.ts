@@ -11,29 +11,29 @@ import { Types, Actions, FetchOptions } from '../index'
  *         (get, fetch, create, search, update, reorder, and destroy)
  */
 export function generateActions<Model>(types: Types): Actions<Model> {
-  const get = (id: string) => ({
+  const get = (id: string, fields: string) => ({
     type: types.get.request,
-    payload: { id },
+    payload: { id, fields },
   })
 
-  const fetch = (options?: FetchOptions) => ({
+  const fetch = (fields: string, options?: FetchOptions) => ({
     type: types.fetch.request,
-    payload: { variables: options },
+    payload: { fields, variables: options },
   })
 
-  const create = (values: Model) => ({
+  const create = (values: Model, fields: string) => ({
     type: types.create.request,
-    payload: { values },
+    payload: { values, fields },
   })
 
-  const update = (id: string, values: any) => ({
+  const update = (id: string, values: any, fields: string) => ({
     type: types.update.request,
-    payload: { id, values },
+    payload: { id, values, fields },
   })
 
-  const archive = (id: string) => ({
+  const archive = (id: string, fields: string) => ({
     type: types.archive.request,
-    payload: { id },
+    payload: { id, fields },
   })
 
   return { get, fetch, create, update, archive }

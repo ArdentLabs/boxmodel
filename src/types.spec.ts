@@ -9,10 +9,6 @@ describe('generateTypes()', () => {
     modelName: 'car',
     schema: new schema.Entity('cars'),
     apiUrl: 'localhost:3000',
-    fields: `
-      make
-      model
-    `,
     entitiesSelector: (state: any) => state.entities,
   }
 
