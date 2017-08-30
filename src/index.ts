@@ -17,6 +17,8 @@ export default class BoxModel {
   constructor(options: BoxModelOptions) {
     this.options = options
     this.reducer = entitiesReducer
+
+    this.generate = this.generate.bind(this)
   }
 
   /**
