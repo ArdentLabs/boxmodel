@@ -1,11 +1,13 @@
 import { ActionMap, Options, Types } from '../index'
 
+export const namespace = '@@boxmodel'
+
 const createActionFactory = (modelName: string) => (operation: string): ActionMap => {
   const prefix = modelName.toUpperCase()
   return {
-    request: `@@boxmodel/${prefix}_${operation}`,
-    ok: `@@boxmodel/${prefix}_${operation}_OK`,
-    fail: `@@boxmodel/${prefix}_${operation}_FAIL`,
+    request: `${namespace}/${prefix}_${operation}`,
+    ok: `${namespace}/${prefix}_${operation}_OK`,
+    fail: `${namespace}/${prefix}_${operation}_FAIL`,
   }
 }
 

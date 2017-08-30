@@ -123,7 +123,7 @@ export interface Selectors<Model> {
   loading: any
   model: any
   models: any
-  filters: (state: any, props: any) => Filters
+  filters: any
 }
 
 export interface JoinWith {

@@ -1,4 +1,4 @@
-import { equal, ok } from 'assert'
+import { ok } from 'assert'
 import generate from './index'
 import { InputOptions } from '../index'
 import { schema } from 'normalizr'
