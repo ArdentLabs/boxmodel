@@ -1,4 +1,4 @@
-import { Types, Actions } from '../index'
+import { Types, Actions, FetchOptions } from '../index'
 
 /**
  * Generates an object of Redux action creators for utilization in generic
@@ -16,12 +16,12 @@ export function generateActions<Model>(types: Types): Actions<Model> {
     payload: { id },
   })
 
-  const fetch = () => ({
+  const fetch = (options?: FetchOptions) => ({
     type: types.fetch.request,
-    payload: {},
+    payload: { variables: options },
   })
 
-  const create = (values: any) => ({
+  const create = (values: Model) => ({
     type: types.create.request,
     payload: { values },
   })

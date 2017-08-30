@@ -81,9 +81,12 @@ export function generateSagas(options: Options, types: Types) {
 
   function* fetchModel(action: Action) {
     try {
-      const { filters, sorts } = action.payload
+      const { variables } = action.payload
+      const sort = variables.sort || {}
+      const filter = variables.filter || {}
+      const page = variables.page || {}
 
-      const res = yield call(callApi, fetchQuery, { filters, sorts })
+      const res = yield call(callApi, fetchQuery, { sort, filter, page })
       const normalized = normalize(res.data[pluralName], [schema])
 
       yield put({
