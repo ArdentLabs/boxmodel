@@ -40,9 +40,4 @@ describe('generate()', () => {
   it('has types', () => {
     ok(res.types)
   })
-
-  it('should pluralize modelName', () => {
-    equal(res.pluralModelName, 'cars')
-  })
-
 })

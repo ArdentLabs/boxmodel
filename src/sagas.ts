@@ -1,13 +1,16 @@
-import { all, call, put, takeLatest } from 'redux-saga/effects'
-import { goBack } from './actions'
+import { all, call, put, select, takeLatest } from 'redux-saga/effects'
 import { normalize } from 'normalizr'
-import { Types, Action, Options } from '../index'
+import * as pluralize from 'pluralize'
+
+import { goBack } from './actions'
+import { Types, Action, Options, State } from '../index'
 
 export function generateSagas(options: Options, types: Types) {
-  const { schema, apiUrl, fields } = options
-  const name = options.modelName
+  const { modelName, schema, apiUrl, fields } = options
+  const name = modelName
+  const pluralName = pluralize(modelName)
+
   const title = name.substr(0, 1).toUpperCase() + name.substr(1)
-  const pluralName = options.pluralModelName
   const url = apiUrl + '/graphql'
 
   // Query a GraphQL API endpoint.
@@ -85,6 +88,20 @@ export function generateSagas(options: Options, types: Types) {
       const sort = variables.sort || {}
       const filter = variables.filter || {}
       const page = variables.page || {}
+
+      const router = yield select((state: State) =>
+        state.router && state.router.location && state.router.location.pathname
+      )
+
+      const tokens = router.split('/')
+
+      if (tokens.length === 3) {
+        // URL matches: /:parentTitle/:parentId/:modelType
+        const parentType
+      }
+      const parent = tokens.length === 3
+        ? tokens[1]
+        : null
 
       const res = yield call(callApi, fetchQuery, { sort, filter, page })
       const normalized = normalize(res.data[pluralName], [schema])

@@ -1,5 +1,3 @@
-import * as pluralize from 'pluralize'
-
 import { generateTypes } from './types'
 import { generatePaths } from './paths'
 import { generateSelectors } from './selectors'
@@ -19,11 +17,10 @@ import { generateRoutes } from './routes'
 export default function generate<Model>(input: InputOptions): BoxModel<Model> {
   const options: Options = {
     ...input,
-    pluralModelName: input.pluralModelName || pluralize(input.modelName),
     entitiesSelector: input.entitiesSelector || ((state) => state.models),
   }
 
-  const { modelName, pluralModelName } = options
+  const { modelName } = options
   const paths = generatePaths(options)
   const routes = generateRoutes(options)
   const selectors = generateSelectors<Model>(options)
@@ -38,7 +35,6 @@ export default function generate<Model>(input: InputOptions): BoxModel<Model> {
     actions,
     modelName,
     paths,
-    pluralModelName,
     reducer,
     routes,
     sagas,

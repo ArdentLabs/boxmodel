@@ -12,9 +12,6 @@ export interface InputOptions {
   // Singularized, camelCase name for the model.
   modelName: string
 
-  // Plural, camelCase name for the model.
-  pluralModelName?: string
-
   // Normalizr schema used for normalizing the result from the GraphQL server.
   schema: Schema
 
@@ -33,7 +30,6 @@ export interface BoxModel<Model> {
   actions: Actions<Model>
   modelName: string
   paths: Paths
-  pluralModelName: string
   reducer: Reducer
   routes: Routes
   sagas: Sagas
@@ -166,9 +162,6 @@ export interface State {
 }
 
 export interface Options extends InputOptions {
-  // Plural, camelCase name for the model.
-  pluralModelName: string
-
   // Selects the entities reducer exposed by boxmodel.
   entitiesSelector: (state: any) => EntitiesState
 }

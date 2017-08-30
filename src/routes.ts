@@ -1,26 +1,25 @@
 import { Options, Routes } from '../index'
 
 export function generateRoutes(options: Options): Routes {
-  const name = options.modelName
-  const pluralName = options.pluralModelName
+  const { modelName } = options
   return [
     {
-      path:`/:parentModel/:parentId/add-${name}`,
+      path:`/:parentModel/:parentId/add-${modelName}`,
     },
     {
-      path:`/:parentModel/:parentId/reorder-${pluralName}`
+      path:`/:parentModel/:parentId/reorder-${modelName}`
     },
     {
-      path:`/${pluralName}/:id/edit`,
+      path:`/${modelName}/:id/edit`,
     },
     {
-      path:`/${pluralName}/:id`,
+      path:`/${modelName}/:id`,
     },
     {
-      path:`/${pluralName}`,
+      path:`/${modelName}`,
     },
     {
-      path:`/add-${name}`,
+      path:`/add-${modelName}`,
     },
   ]
 }

@@ -24,13 +24,13 @@ const createPathFactory: PathFactory = (getPath, absolute) => (id) => {
  * Generate paths for client-side operations.
  */
 export function generatePaths(options: Options): Paths {
-  const { modelName, pluralModelName } = options
+  const { modelName } = options
 
   const create = createPathFactory(() => `add-${modelName}`)
-  const edit = createPathFactory((id) => `${pluralModelName}/${id}/edit`, true)
-  const fetch = createPathFactory(() => `${pluralModelName}`, true)
-  const get = createPathFactory((id) => `${pluralModelName}/${id}`, true)
-  const reorder = createPathFactory(() => `reorder-${pluralModelName}`)
+  const edit = createPathFactory((id) => `${modelName}/${id}/edit`, true)
+  const fetch = createPathFactory(() => `${modelName}`, true)
+  const get = createPathFactory((id) => `${modelName}/${id}`, true)
+  const reorder = createPathFactory(() => `reorder-${modelName}`)
 
   return {
     create,

@@ -1,19 +1,19 @@
 import { equal } from 'assert'
 import { schema } from 'normalizr'
 
-import { generateTypes, , getOk, getFail } from './types'
+import { generateTypes } from './types'
 import { Options } from '../index'
 
 describe('generateTypes()', () => {
   const options: Options = {
     modelName: 'car',
-    pluralModelName: 'cars',
     schema: new schema.Entity('cars'),
     apiUrl: 'localhost:3000',
     fields: `
       make
       model
     `,
+    entitiesSelector: (state: any) => state.entities,
   }
 
   const types = generateTypes(options)
