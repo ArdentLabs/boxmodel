@@ -5,40 +5,49 @@ import { generateActions } from './actions'
 import { generateSagas } from './sagas'
 import { generateReducer } from './reducer'
 
-import { BoxModel, InputOptions, Options } from '../index'
+import { BoxModelOptions, Box, InputOptions, Options } from '../index'
 import { generateRoutes } from './routes'
 
-/**
- * Generates all the metadata state that any Model will need. This allows
- * programmers to worry less about the Redux action types, action creators,
- * reducers, URL paths, and selectors. By eliminating code repetition, this
- * generation of metadata reduces human error.
- */
-export default function generate<Model>(input: InputOptions): BoxModel<Model> {
-  const options: Options = {
-    ...input,
-    entitiesSelector: input.entitiesSelector || ((state) => state.models),
+export default class BoxModel {
+  private options: BoxModelOptions
+
+  constructor(options: BoxModelOptions) {
+    this.options = options
   }
 
-  const { modelName } = options
-  const paths = generatePaths(options)
-  const routes = generateRoutes(options)
-  const selectors = generateSelectors<Model>(options)
-  const types = generateTypes(options)
+  /**
+   * Generates all the metadata state that any Model will need. This allows
+   * programmers to worry less about the Redux action types, action creators,
+   * reducers, URL paths, and selectors. By eliminating code repetition, this
+   * generation of model metadata reduces human error and maintainence.
+   */
+  public generate<Model>(input: InputOptions): Box<Model> {
+    const options: Options = {
+      ...this.options,
+      entitiesSelector: this.options.entitiesSelector || ((state) => state.models),
+      ...input,
+    }
 
-  const actions = generateActions<Model>(types)
-  const reducer = generateReducer(types)
-  const sagas = generateSagas(options, types)
+    const { modelName } = options
+    const paths = generatePaths(options)
+    const routes = generateRoutes(options)
+    const selectors = generateSelectors<Model>(options)
+    const types = generateTypes(options)
 
-  return {
-    $$isBoxModel: true,
-    actions,
-    modelName,
-    paths,
-    reducer,
-    routes,
-    sagas,
-    selectors,
-    types,
+    const actions = generateActions<Model>(types)
+    const reducer = generateReducer(types)
+    const sagas = generateSagas(options, types)
+
+    return {
+      $$isBoxModel: true,
+      actions,
+      modelName,
+      paths,
+      reducer,
+      routes,
+      sagas,
+      selectors,
+      types,
+    }
   }
 }

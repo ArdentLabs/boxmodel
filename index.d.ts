@@ -6,15 +6,11 @@ import { schema } from 'normalizr'
 import { RouteProps, match } from 'react-router'
 import { RouterState } from 'react-router-redux'
 
-export default function generate<Model>(input: InputOptions): BoxModel<Model>
+export default class BoxModel {
+  generate<Model>(input: InputOptions): Box<Model>
+}
 
-export interface InputOptions {
-  // Singularized, camelCase name for the model.
-  modelName: string
-
-  // Normalizr schema used for normalizing the result from the GraphQL server.
-  schema: Schema
-
+export interface BoxModelOptions {
   // URL of the GraphQL server you want to talk to.
   apiUrl: string
 
@@ -22,7 +18,15 @@ export interface InputOptions {
   entitiesSelector?: (state: any) => EntitiesState
 }
 
-export interface BoxModel<Model> {
+export interface InputOptions {
+  // Singularized, camelCase name for the model.
+  modelName: string
+
+  // Normalizr schema used for normalizing the result from the GraphQL server.
+  schema: Schema
+}
+
+export interface Box<Model> {
   $$isBoxModel: true
   actions: Actions<Model>
   modelName: string
@@ -162,6 +166,9 @@ export interface State {
 }
 
 export interface Options extends InputOptions {
+  // URL of the GraphQL server you want to talk to.
+  apiUrl: string
+
   // Selects the entities reducer exposed by boxmodel.
   entitiesSelector: (state: any) => EntitiesState
 }

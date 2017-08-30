@@ -1,5 +1,5 @@
 import { ok } from 'assert'
-import generate from './index'
+import BoxModel from './index'
 import { InputOptions } from '../index'
 import { schema } from 'normalizr'
 
@@ -7,10 +7,10 @@ describe('generate()', () => {
   const options: InputOptions = {
     modelName: 'car',
     schema: new schema.Entity('cars'),
-    apiUrl: 'localhost:3000',
   }
 
-  const res = generate(options)
+  const box = new BoxModel({ apiUrl: 'localhost:3000' })
+  const res = box.generate(options)
 
   it('has $$isBoxModel', () => {
     ok(res.$$isBoxModel)
