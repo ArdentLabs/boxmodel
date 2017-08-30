@@ -3,7 +3,7 @@
 // Definitions by: Sam Balana <sam.balana@ardentacademy.com>
 
 import { schema } from 'normalizr'
-import { RouteProps, match } from 'react-router'
+import { match } from 'react-router'
 import { RouterState } from 'react-router-redux'
 
 export default class BoxModel {
@@ -32,7 +32,7 @@ export interface Box<Model> {
   modelName: string
   paths: Paths
   reducer: Reducer
-  routes: Routes
+  routes: RouteFactory
   sagas: Sagas
   selectors: Selectors<Model>
   types: Types
@@ -106,7 +106,22 @@ export interface ModelState {
 
 export type Schema = schema.Entity
 
-export type Routes = Partial<RouteProps>[]
+export type RouteFactory = (options: RouteOptions) => [Route, Route, Route, Route, Route, Route]
+
+export interface RouteOptions {
+  Table: any
+  Create: any
+  Reorder: any
+  Edit: any
+  Detail: any
+}
+
+export interface Route {
+  path: string,
+  component: any,
+}
+
+export type Routes = Route[]
 
 export interface ActionMap {
   request: string
