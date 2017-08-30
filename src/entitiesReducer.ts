@@ -1,17 +1,8 @@
 import * as deepmerge from 'deepmerge'
 
-import { EntitiesState, Action } from '../index'
+import { EntitiesReducer, EntitiesState } from '../index'
 
-interface ModelAction extends Action {
-  type: string
-  payload: {
-    entities: EntitiesState
-    entityKey?: string
-    id?: string
-  }
-}
-
-export default (state: EntitiesState = {}, action: ModelAction): EntitiesState => {
+const reducer: EntitiesReducer = (state = {}, action) => {
   const { type, payload } = action
 
   if (!type.startsWith('@@boxmodel/')) {
@@ -44,3 +35,5 @@ export default (state: EntitiesState = {}, action: ModelAction): EntitiesState =
 
   return state
 }
+
+export default reducer

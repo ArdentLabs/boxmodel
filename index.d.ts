@@ -180,3 +180,14 @@ interface EntitiesState {
 interface ModelEntities<Model> {
   [id: string]: Model
 }
+
+export interface EntitiesAction extends Action {
+  type: string
+  payload: {
+    entities: EntitiesState
+    entityKey?: string
+    id?: string
+  }
+}
+
+export type EntitiesReducer = (state: EntitiesState, action: EntitiesAction) => EntitiesState

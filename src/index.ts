@@ -1,3 +1,5 @@
+import entitiesReducer from './entitiesReducer'
+
 import { generateTypes } from './types'
 import { generatePaths } from './paths'
 import { generateSelectors } from './selectors'
@@ -5,14 +7,16 @@ import { generateActions } from './actions'
 import { generateSagas } from './sagas'
 import { generateReducer } from './reducer'
 
-import { BoxModelOptions, Box, InputOptions, Options } from '../index'
+import { BoxModelOptions, Box, InputOptions, Options, EntitiesReducer } from '../index'
 import { generateRoutes } from './routes'
 
 export default class BoxModel {
+  public reducer: EntitiesReducer
   private options: BoxModelOptions
 
   constructor(options: BoxModelOptions) {
     this.options = options
+    this.reducer = entitiesReducer
   }
 
   /**
