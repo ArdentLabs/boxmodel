@@ -72,10 +72,13 @@ export function generateSaga(schema: ModelSchema, types: Types, apiUrl: string) 
         throw new Error(`Fields required for reading a single ${title}`)
       }
 
+      if (typeof fields === 'string' && fields.indexOf('id') < 0) {
+        console.error(`Required field 'id' not returned when running a get query for ${name} model`)
+      }
+
       const getQuery = `
         query Get${title}($id: ID!) {
           ${name}(id: $id) {
-            id
             ${fields}
           }
         }
@@ -107,6 +110,10 @@ export function generateSaga(schema: ModelSchema, types: Types, apiUrl: string) 
         throw new Error(`Fields required for reading several ${title}`)
       }
 
+      if (typeof fields === 'string' && fields.indexOf('id') < 0) {
+        console.error(`Required field 'id' not returned when running a fetch query for ${name} model`)
+      }
+
       const sort = variables.sort || {}
       const filter = variables.filter || {}
       const page = variables.page || {}
@@ -132,7 +139,6 @@ export function generateSaga(schema: ModelSchema, types: Types, apiUrl: string) 
       const fetchQuery = `
         query Fetch${title}($filter: Filters, $sort: Sorts) {
           ${pluralName}(filter: $filter, sort: $sort) {
-            id
             ${fields}
           }
         }
@@ -164,10 +170,13 @@ export function generateSaga(schema: ModelSchema, types: Types, apiUrl: string) 
         throw new Error(`Fields required for creating a ${title}`)
       }
 
+      if (typeof fields === 'string' && fields.indexOf('id') < 0) {
+        console.error(`Required field 'id' not returned when running a create query for ${name} model`)
+      }
+
       const createQuery = `
         mutation Create${title}($input: Create${title}Input!) {
           create${title}(input: $input) {
-            id
             ${fields}
           }
         }
@@ -207,10 +216,13 @@ export function generateSaga(schema: ModelSchema, types: Types, apiUrl: string) 
         throw new Error(`Fields required for updating a ${title}`)
       }
 
+      if (typeof fields === 'string' && fields.indexOf('id') < 0) {
+        console.error(`Required field 'id' not returned when running a update query for ${name} model`)
+      }
+
       const updateQuery = `
         mutation Update${title}($input: Update${title}Input!) {
           update${title}(input: $input) {
-            id
             ${fields}
           }
         }
@@ -250,10 +262,13 @@ export function generateSaga(schema: ModelSchema, types: Types, apiUrl: string) 
         throw new Error(`ID required for archiving a ${title}`)
       }
 
+      if (typeof fields === 'string' && fields.indexOf('id') < 0) {
+        console.error(`Required field 'id' not returned when running a archive query for ${name} model`)
+      }
+
       const archiveQuery = `
         mutation Archive${title}($id: ID!) {
           archive${title}(id: $id) {
-            id
             ${fields}
           }
         }
