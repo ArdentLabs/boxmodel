@@ -1,5 +1,8 @@
+<<<<<<< HEAD
 import { combineReducers } from 'redux'
 
+=======
+>>>>>>> 6057401d88bd03dc3f7479870daeeb703122022f
 import { generateTypes } from './types'
 import { generatePaths } from './paths'
 import { generateSelectors } from './selectors'
@@ -24,7 +27,11 @@ export default class BoxModel {
 
   constructor(options: BoxModelOptions) {
     this.options = options
+<<<<<<< HEAD
     this.modelsSelector = options.selector
+=======
+    this.reducerSelector = options.entitiesSelector || ((state) => state.models)
+>>>>>>> 6057401d88bd03dc3f7479870daeeb703122022f
 
     this.reducers = {}
     this.routes = []

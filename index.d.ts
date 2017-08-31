@@ -69,6 +69,7 @@ export interface ActionPayload {
   params?: any
   message?: string
   filters?: any
+  result?: ReadonlyArray<string>,
   sorts?: any
   values?: any
   variables?: any
@@ -183,7 +184,7 @@ export type Selector<Model> = (state: any, props: Props<Model>) => any
 export type Saga = (action: ModelAction<any>) => IterableIterator<AllEffect>
 
 export interface ModelState<Model> {
-  result: string[]
+  result: ReadonlyArray<string>
   entities: Entities<Model>
   loading: boolean
   error: string
