@@ -1,4 +1,4 @@
-import entitiesReducer from './entitiesReducer'
+import { combineReducers } from 'redux'
 
 import { generateTypes } from './types'
 import { generatePaths } from './paths'
@@ -8,23 +8,23 @@ import { generateSaga } from './sagas'
 import { generateReducer } from './reducer'
 
 import {
-  ModelSchema, BoxModelOptions, ReducerMap, Route, Saga, Box, BoxMap, EntitiesReducer,
+  ModelSchema, BoxModelOptions, ReducerMap, Route, Saga, Box, BoxMap, ModelsReducer,
+  ModelsSelector,
 } from '../index'
 import { generateRoutes } from './routes'
 
 export default class BoxModel {
-  public reducer: EntitiesReducer
+  public reducer: ModelsReducer
   public reducers: ReducerMap
   public routes: Route[]
   public sagas: Saga[]
   private boxes: BoxMap
   private options: BoxModelOptions
-  private reducerSelector: (state: any) => any
+  private modelsSelector: ModelsSelector
 
   constructor(options: BoxModelOptions) {
     this.options = options
-    this.reducer = entitiesReducer
-    this.reducerSelector = options.entitiesSelector || ((state) => state.models)
+    this.modelsSelector = options.selector
 
     this.reducers = {}
     this.routes = []
@@ -34,6 +34,8 @@ export default class BoxModel {
     this.generate = this.generate.bind(this)
 
     options.schemas.map(this.generate)
+
+    this.reducer = combineReducers(this.reducers)
   }
 
   /**
@@ -47,7 +49,7 @@ export default class BoxModel {
 
     const types = generateTypes(key)
     const actions = generateActions<any>(types)
-    const selectors = generateSelectors<any>(key, this.reducerSelector)
+    const selectors = generateSelectors<any>(key, this.modelsSelector)
     const paths = generatePaths(key)
     const box: Box<any> = {
       $$isBoxModel: true,

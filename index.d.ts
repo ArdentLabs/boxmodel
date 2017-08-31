@@ -6,6 +6,7 @@ import { schema } from 'normalizr'
 import { match } from 'react-router'
 import { RouterState } from 'react-router-redux'
 import { AllEffect } from 'redux-saga/effects'
+import { Selector } from 'reselect'
 
 export class ModelSchema extends schema.Entity {
   constructor(key: string, definition?: Schema, options?: schema.EntityOptions)
@@ -33,8 +34,8 @@ export interface BoxModelOptions {
   // URL of the GraphQL server you want to talk to.
   apiUrl: string
 
-  // Selects the entities reducer exposed by boxmodel.
-  entitiesSelector?: EntitiesSelector
+  // Selects the Redux state of the reducer exposed by boxmodel.
+  selector: ModelsSelector
 }
 
 export interface Box<Model> {
@@ -108,16 +109,10 @@ export interface Paths {
   reorder: PathGenerator // Path to reorder existing models
 }
 
-export type Reducer = (state: ModelState, action: Action) => ModelState
+export type Reducer<Model> = (state: ModelState<Model>, action: Action) => ModelState<Model>
 
 export interface ReducerMap {
-  [modelName: string]: Reducer
-}
-
-export interface ModelState {
-  result: string[],
-  loading: boolean,
-  error: string | null,
+  [modelName: string]: Reducer<any>
 }
 
 export type Schema = schema.Entity
@@ -185,30 +180,36 @@ export interface Props<Model> {
 
 export type Selector<Model> = (state: any, props: Props<Model>) => any
 
-export type Sagas = () => IterableIterator<AllEffect>
+export type Saga = (action: ModelAction<any>) => IterableIterator<AllEffect>
 
-export interface State {
-  entities?: EntitiesState
-  router?: RouterState
-  [modelTitle: string]: any
+export interface ModelState<Model> {
+  result: string[]
+  entities: Entities<Model>
+  loading: boolean
+  error: string
 }
 
-interface EntitiesState {
-  [modelType: string]: ModelEntities<any>
+export interface Entities<Model> {
+  [id: string]: Model
 }
 
 interface ModelEntities<Model> {
   [id: string]: Model
 }
 
-export interface EntitiesAction extends Action {
+export type ModelsReducer = (state: ModelsState, action: ModelAction<any>) => ModelsState
+
+export interface ModelsState {
+  [modelName: string]: ModelState<any>
+}
+
+export interface ModelAction<Model> extends Action {
   type: string
   payload: {
-    entities: EntitiesState
+    entities: Entities<Model>
     entityKey?: string
     id?: string
   }
 }
 
-export type EntitiesReducer = (state: EntitiesState, action: EntitiesAction) => EntitiesState
-export type EntitiesSelector = (state: any) => EntitiesState
+export type ModelsSelector = Selector<any, ModelsState>

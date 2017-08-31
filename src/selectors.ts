@@ -1,5 +1,5 @@
 import { createSelector } from 'reselect'
-import { State, JoinWith, Props, TransformFunc, EntitiesSelector, Selectors } from '../index'
+import { ModelsSelector, ModelState, ModelsState, JoinWith, Props, TransformFunc, Selectors } from '../index'
 import sort from 'sort-obj-array'
 
 /**
@@ -28,7 +28,7 @@ import sort from 'sort-obj-array'
  * @return {object}
  *         The final model object, with all joined models merged in
  */
-function join<Model>(model: any, joinWith: JoinWith | undefined, state: State) {
+function join<Model>(model: any, joinWith: JoinWith | undefined, state: ModelsState) {
   if (!model || !joinWith) {
     return model
   }
@@ -70,7 +70,7 @@ function join<Model>(model: any, joinWith: JoinWith | undefined, state: State) {
           case 'object':
             if ((value as JoinWith).$$isBoxModel) {
               // State data, used in ModelEdit
-              result[key] = state[`${key}s`].entities[submodel]
+              result[key] = state[key].entities[submodel]
             } else {
               // Nested object recursion
               result[key] = join<Model>(submodel, value as JoinWith, state)
@@ -78,11 +78,11 @@ function join<Model>(model: any, joinWith: JoinWith | undefined, state: State) {
             break
           case 'string':
             // Custom Redux store location
-            result[key] = state[`${value}s`].entities[submodel]
+            result[key] = state[value as string].entities[submodel]
             break
           case 'boolean':
             // Simply join from Redux store with default key name
-            result[key] = state[`${key}s`].entities[submodel]
+            result[key] = state[key].entities[submodel]
             break
           default:
             throw new Error(`Value type '${typeof value}'not recognized`)
@@ -98,13 +98,11 @@ function join<Model>(model: any, joinWith: JoinWith | undefined, state: State) {
  * Generates functions for selecting certain portions of the Redux state for a
  * model type.
  */
-export function generateSelectors<Model>(modelName: string, entitiesSelector: EntitiesSelector): Selectors<Model> {
-  const path = modelName
-
+export function generateSelectors<Model>(modelName: string, modelsSelector: ModelsSelector): Selectors<Model> {
   /**
    * Get the identifier of the requested model
    */
-  const getId = (state: State, props: Props<Model>) => {
+  const getId = (state: any, props: Props<Model>) => {
     if (props.id) {
       return props.id
     }
@@ -121,17 +119,25 @@ export function generateSelectors<Model>(modelName: string, entitiesSelector: En
     throw new Error('ID not found')
   }
 
+  const getState = createSelector(
+    modelsSelector,
+    (state) => state[modelName]
+  )
+
   /**
    * Get the loading state of the requested model type
    */
-  const getLoading = (state: State) => state[path] && state[path].loading
+  const getLoading = createSelector(
+    getState,
+    (state) => state.loading
+  )
 
   /**
    * Get all the entities of the requested model type
    */
   const getEntities = createSelector(
-    entitiesSelector,
-    (entities) => entities[path]
+    getState,
+    (state) => state.entities
   )
 
   /**
@@ -146,7 +152,7 @@ export function generateSelectors<Model>(modelName: string, entitiesSelector: En
   /**
    * Get the join parameters (props.joinWith)
    */
-  const getJoinWith = (_: State, props: Props<Model>) => props.joinWith
+  const getJoinWith = (_: any, props: Props<Model>) => props.joinWith
 
   /**
    * Get the requested model, joind with the data within
@@ -188,7 +194,7 @@ export function generateSelectors<Model>(modelName: string, entitiesSelector: En
   /**
    * Get any desired mutation functions (props.mutate)
    */
-  const getTransformations = (_: State, props: Props<Model>) => {
+  const getTransformations = (_: ModelState<Model>, props: Props<Model>) => {
     const { transform } = props
     return transform ? [transform] : []
   }
@@ -209,7 +215,7 @@ export function generateSelectors<Model>(modelName: string, entitiesSelector: En
   /**
    * Get provided filtering parameters
    */
-  const getPropFilters = (_: State, props: Props<Model>) => props.filters
+  const getPropFilters = (_: ModelState<Model>, props: Props<Model>) => props.filters
 
   /**
    * Generate the filtering parameters
@@ -248,7 +254,7 @@ export function generateSelectors<Model>(modelName: string, entitiesSelector: En
   /**
    * Get the sorting parameters (props.sortBy)
    */
-  const getSortBy = (state: State, props: Props<Model>) => {
+  const getSortBy = (state: ModelState<Model>, props: Props<Model>) => {
     const { sortBy } = props
     return typeof sortBy === 'function'
       ? (a: Model, b: Model) => sortBy(a, b, state)

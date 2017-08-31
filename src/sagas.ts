@@ -4,7 +4,7 @@ import * as pluralize from 'pluralize'
 
 import { goBack } from './actions'
 import { getMergeType } from './types'
-import { ModelSchema, Types, Action, State } from '../index'
+import { ModelSchema, Types, Action } from '../index'
 
 interface Entities {
   [modelName: string]: {
@@ -110,7 +110,7 @@ export function generateSaga(schema: ModelSchema, types: Types, apiUrl: string) 
       const filter = variables.filter || {}
       const page = variables.page || {}
 
-      const router = yield select((state: State) =>
+      const router = yield select((state: any) =>
         state.router && state.router.location && state.router.location.pathname
       )
 
