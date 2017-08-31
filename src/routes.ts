@@ -8,6 +8,7 @@ export function generateRoutes(modelName: string, components: ModelComponents, b
     routes.push({
       path: `/:parentModel/:parentId/add-${modelName}`,
       component: Create,
+      props: { box },
     })
   }
 
@@ -15,6 +16,7 @@ export function generateRoutes(modelName: string, components: ModelComponents, b
     routes.push({
       path: `/:parentModel/:parentId/reorder-${modelName}`,
       component: Reorder,
+      props: { box },
     })
   }
 
@@ -22,6 +24,7 @@ export function generateRoutes(modelName: string, components: ModelComponents, b
     routes.push({
       path: `/${modelName}/:id/edit`,
       component: Edit,
+      props: { box },
     })
   }
 
@@ -29,6 +32,7 @@ export function generateRoutes(modelName: string, components: ModelComponents, b
     routes.push({
       path: `/${modelName}/:id`,
       component: Detail,
+      props: { box },
     })
   }
 
@@ -36,6 +40,7 @@ export function generateRoutes(modelName: string, components: ModelComponents, b
     routes.push({
       path: `/add-${modelName}`,
       component: Create,
+      props: { box },
     })
   }
 
@@ -43,6 +48,7 @@ export function generateRoutes(modelName: string, components: ModelComponents, b
     routes.push({
       path: `/${modelName}`,
       component: Table,
+      props: { box },
     })
   }
 

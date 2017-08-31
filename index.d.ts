@@ -124,9 +124,14 @@ export type Schema = schema.Entity
 
 export type RouteFactory = (components: ModelComponents) => Route[]
 
+export interface RouteProps {
+  box: Box<any>,
+}
+
 export interface Route {
   path: string,
   component: any,
+  props: RouteProps,
 }
 
 export type Routes = Route[]
