@@ -143,6 +143,7 @@ export interface Types {
   create: ActionMap
   update: ActionMap
   archive: ActionMap
+  merge: string
 }
 
 export interface Selectors<Model> {

@@ -3,7 +3,25 @@ import { normalize } from 'normalizr'
 import * as pluralize from 'pluralize'
 
 import { goBack } from './actions'
+import { getMergeType } from './types'
 import { ModelSchema, Types, Action, State } from '../index'
+
+interface Entities {
+  [modelName: string]: {
+    [id: string]: any
+  }
+}
+
+function* distributeEntities(normalized: Entities) {
+  const keys = Object.keys(normalized)
+
+  for (const key of keys) {
+    yield put({
+      type: getMergeType(key),
+      payload: { entities: normalized[key] },
+    })
+  }
+}
 
 export function generateSaga(schema: ModelSchema, types: Types, apiUrl: string) {
   const name = schema.key
@@ -63,11 +81,13 @@ export function generateSaga(schema: ModelSchema, types: Types, apiUrl: string) 
       `
 
       const res = yield call(callApi, getQuery, { id })
-      const normalized = normalize(res.data[name], schema)
+      const { entities, result } = normalize(res.data[name], schema)
+
+      yield* distributeEntities(entities)
 
       yield put({
         type: types.get.ok,
-        payload: normalized,
+        payload: { result },
       })
     } catch (err) {
       yield put({
@@ -117,11 +137,13 @@ export function generateSaga(schema: ModelSchema, types: Types, apiUrl: string) 
       `
 
       const res = yield call(callApi, fetchQuery, { sort, filter, page })
-      const normalized = normalize(res.data[pluralName], [schema])
+      const { entities, result } = normalize(res.data[pluralName], [schema])
+
+      yield* distributeEntities(entities)
 
       yield put({
         type: types.fetch.ok,
-        payload: normalized,
+        payload: { result },
       })
     } catch (err) {
       yield put({
@@ -150,11 +172,13 @@ export function generateSaga(schema: ModelSchema, types: Types, apiUrl: string) 
 
       const res = yield call(callApi, createQuery, { input: values })
       const model = res.data[`create${title}`]
-      const normalized = normalize(model, schema)
+      const { entities, result } = normalize(model, schema)
+
+      yield* distributeEntities(entities)
 
       yield put({
         type: types.create.ok,
-        payload: normalized,
+        payload: { result },
       })
 
       // Redirect to previous page
@@ -189,11 +213,13 @@ export function generateSaga(schema: ModelSchema, types: Types, apiUrl: string) 
       `
 
       const res = yield call(callApi, updateQuery, { input: { id, ...values } })
-      const normalized = normalize(res.data[`update${title}`], schema)
+      const { entities, result } = normalize(res.data[`update${title}`], schema)
+
+      yield* distributeEntities(entities)
 
       yield put({
         type: types.update.ok,
-        payload: normalized,
+        payload: { result },
       })
 
       // Redirect to previous page
@@ -228,11 +254,14 @@ export function generateSaga(schema: ModelSchema, types: Types, apiUrl: string) 
         }
       `
 
-      yield call(callApi, archiveQuery, { id })
+      const res = yield call(callApi, archiveQuery, { id })
+      const { entities, result } = normalize(res.data[`archive${title}`], schema)
+
+      yield* distributeEntities(entities)
 
       yield put({
         type: types.archive.ok,
-        payload: { id, entityKey: pluralName },
+        payload: { id, result },
       })
     } catch (err) {
       yield put({

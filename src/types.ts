@@ -11,6 +11,11 @@ const createActionFactory = (modelName: string) => (operation: string): ActionMa
   }
 }
 
+export function getMergeType(modelName: string) {
+  const prefix = modelName.toUpperCase()
+  return `${namespace}/${prefix}_MERGE`
+}
+
 export function generateTypes(modelName: string): Types {
   const factory = createActionFactory(modelName)
 
@@ -19,6 +24,7 @@ export function generateTypes(modelName: string): Types {
   const create = factory('CREATE')
   const update = factory('UPDATE')
   const archive = factory('ARCHIVE')
+  const merge = getMergeType(modelName)
 
-  return { get, fetch, create, update, archive }
+  return { get, fetch, create, update, archive, merge }
 }
