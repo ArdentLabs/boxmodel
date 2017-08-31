@@ -1,4 +1,4 @@
-import { ActionMap, Options, Types } from '../index'
+import { ActionMap, Types } from '../index'
 
 export const namespace = '@@boxmodel'
 
@@ -11,8 +11,8 @@ const createActionFactory = (modelName: string) => (operation: string): ActionMa
   }
 }
 
-export function generateTypes(options: Options): Types {
-  const factory = createActionFactory(options.modelName)
+export function generateTypes(modelName: string): Types {
+  const factory = createActionFactory(modelName)
 
   const get = factory('GET')
   const fetch = factory('FETCH')

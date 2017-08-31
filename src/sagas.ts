@@ -3,12 +3,11 @@ import { normalize } from 'normalizr'
 import * as pluralize from 'pluralize'
 
 import { goBack } from './actions'
-import { Types, Action, Options, State } from '../index'
+import { ModelSchema, Types, Action, State } from '../index'
 
-export function generateSagas(options: Options, types: Types) {
-  const { modelName, schema, apiUrl } = options
-  const name = modelName
-  const pluralName = pluralize(modelName)
+export function generateSaga(schema: ModelSchema, types: Types, apiUrl: string) {
+  const name = schema.key
+  const pluralName = pluralize(name)
 
   const title = name.substr(0, 1).toUpperCase() + name.substr(1)
   const url = apiUrl + '/graphql'
@@ -41,7 +40,6 @@ export function generateSagas(options: Options, types: Types) {
       return Promise.reject(err)
     }
   }
-
 
   function* getModel(action: Action) {
     try {

@@ -6,24 +6,34 @@ import { schema } from 'normalizr'
 import { match } from 'react-router'
 import { RouterState } from 'react-router-redux'
 
+export class ModelSchema extends schema.Entity {
+  constructor(key: string, definition?: Schema, options?: schema.EntityOptions)
+  public mount(components: ModelComponents): void
+  public components: ModelComponents
+}
+
+export interface ModelComponents {
+  Table: any
+  Create: any
+  Reorder: any
+  Edit: any
+  Detail: any
+}
+
 export default class BoxModel {
-  generate<Model>(input: InputOptions): Box<Model>
+  constructor(options: BoxModelOptions)
+  private generate<Model>(schema: ModelSchema): Box<Model>
 }
 
 export interface BoxModelOptions {
+  // All the schemas for the models you want a box for.
+  schemas: ModelSchema[]
+
   // URL of the GraphQL server you want to talk to.
   apiUrl: string
 
   // Selects the entities reducer exposed by boxmodel.
-  entitiesSelector?: (state: any) => EntitiesState
-}
-
-export interface InputOptions {
-  // Singularized, camelCase name for the model.
-  modelName: string
-
-  // Normalizr schema used for normalizing the result from the GraphQL server.
-  schema: Schema
+  entitiesSelector?: EntitiesSelector
 }
 
 export interface Box<Model> {
@@ -31,11 +41,12 @@ export interface Box<Model> {
   actions: Actions<Model>
   modelName: string
   paths: Paths
-  reducer: Reducer
-  routes: RouteFactory
-  sagas: Sagas
   selectors: Selectors<Model>
   types: Types
+}
+
+export interface BoxMap {
+  [modelName: string]: Box<any>
 }
 
 export interface Actions<Model> {
@@ -98,6 +109,10 @@ export interface Paths {
 
 export type Reducer = (state: ModelState, action: Action) => ModelState
 
+export interface ReducerMap {
+  [modelName: string]: Reducer
+}
+
 export interface ModelState {
   result: string[],
   loading: boolean,
@@ -106,15 +121,7 @@ export interface ModelState {
 
 export type Schema = schema.Entity
 
-export type RouteFactory = (components: RouteComponents) => Route[]
-
-export interface RouteComponents {
-  Table: any
-  Create: any
-  Reorder: any
-  Edit: any
-  Detail: any
-}
+export type RouteFactory = (components: ModelComponents) => Route[]
 
 export interface Route {
   path: string,
@@ -180,14 +187,6 @@ export interface State {
   [modelTitle: string]: any
 }
 
-export interface Options extends InputOptions {
-  // URL of the GraphQL server you want to talk to.
-  apiUrl: string
-
-  // Selects the entities reducer exposed by boxmodel.
-  entitiesSelector: (state: any) => EntitiesState
-}
-
 interface EntitiesState {
   [modelType: string]: ModelEntities<any>
 }
@@ -206,3 +205,4 @@ export interface EntitiesAction extends Action {
 }
 
 export type EntitiesReducer = (state: EntitiesState, action: EntitiesAction) => EntitiesState
+export type EntitiesSelector = (state: any) => EntitiesState

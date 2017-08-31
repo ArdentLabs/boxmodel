@@ -1,4 +1,4 @@
-import { PathGenerator, Paths, Options } from '../index'
+import { PathGenerator, Paths } from '../index'
 
 type PathFactory = (getPath: PathGenerator, absolute?: boolean) => PathGenerator
 
@@ -23,9 +23,7 @@ const createPathFactory: PathFactory = (getPath, absolute) => (id) => {
 /**
  * Generate paths for client-side operations.
  */
-export function generatePaths(options: Options): Paths {
-  const { modelName } = options
-
+export function generatePaths(modelName: string): Paths {
   const create = createPathFactory(() => `add-${modelName}`)
   const edit = createPathFactory((id) => `${modelName}/${id}/edit`, true)
   const fetch = createPathFactory(() => `${modelName}`, true)

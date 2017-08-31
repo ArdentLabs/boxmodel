@@ -1,5 +1,5 @@
 import { createSelector } from 'reselect'
-import { State, JoinWith, Props, TransformFunc, Options, Selectors } from '../index'
+import { State, JoinWith, Props, TransformFunc, EntitiesSelector, Selectors } from '../index'
 import sort from 'sort-obj-array'
 
 /**
@@ -98,8 +98,7 @@ function join<Model>(model: any, joinWith: JoinWith | undefined, state: State) {
  * Generates functions for selecting certain portions of the Redux state for a
  * model type.
  */
-export function generateSelectors<Model>(options: Options): Selectors<Model> {
-  const { entitiesSelector, modelName } = options
+export function generateSelectors<Model>(modelName: string, entitiesSelector: EntitiesSelector): Selectors<Model> {
   const path = modelName
 
   /**
