@@ -1,5 +1,3 @@
-import entitiesReducer from './entitiesReducer'
-
 import { generateTypes } from './types'
 import { generatePaths } from './paths'
 import { generateSelectors } from './selectors'
@@ -23,7 +21,6 @@ export default class BoxModel {
 
   constructor(options: BoxModelOptions) {
     this.options = options
-    this.reducer = entitiesReducer
     this.reducerSelector = options.entitiesSelector || ((state) => state.models)
 
     this.reducers = {}

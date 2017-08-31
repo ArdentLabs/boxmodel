@@ -68,6 +68,7 @@ export interface ActionPayload {
   params?: any
   message?: string
   filters?: any
+  result?: ReadonlyArray<string>,
   sorts?: any
   values?: any
   variables?: any
@@ -115,7 +116,12 @@ export interface ReducerMap {
 }
 
 export interface ModelState {
-  result: string[],
+  result: ReadonlyArray<string>,
+  entities: {
+    [id: string]: {
+      [field: string]: any
+    }
+  }
   loading: boolean,
   error: string | null,
 }
@@ -185,7 +191,7 @@ export interface Props<Model> {
 
 export type Selector<Model> = (state: any, props: Props<Model>) => any
 
-export type Sagas = () => IterableIterator<AllEffect>
+export type Saga = () => IterableIterator<AllEffect>
 
 export interface State {
   entities?: EntitiesState
