@@ -22,12 +22,8 @@ export interface ModelComponents {
 }
 
 export default class BoxModel {
-<<<<<<< HEAD
   constructor(options: BoxModelOptions)
   private generate<Model>(schema: ModelSchema): Box<Model>
-=======
-  private generate<Model>(input: InputOptions): Box<Model>
->>>>>>> 617542d94aaed2cd58a3beadaad049aa07993c7e
 }
 
 export interface BoxModelOptions {
