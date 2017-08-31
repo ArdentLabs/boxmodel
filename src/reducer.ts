@@ -2,20 +2,20 @@ import * as deepmerge from 'deepmerge'
 
 import { ModelState, Action, Types, Reducer } from '../index'
 
-const initialState: ModelState = {
-  result: [],
-  entities: {},
-  loading: false,
-  error: null
-}
+export function generateReducer<Model>(types: Types): Reducer<Model> {
+  const initialState: ModelState<Model> = {
+    result: [],
+    entities: {},
+    loading: false,
+    error: '',
+  }
 
-export function generateReducer(types: Types): Reducer {
-  return (state: ModelState = initialState, action: Action) => {
+  return (state: ModelState<Model> = initialState, action: Action) => {
     const { type, payload } = action
 
     switch (type) {
       case types.merge:
-        return deepmerge(state, payload as ModelState)
+        return deepmerge(state, payload as ModelState<Model>)
 
       case types.get.request:
       case types.fetch.request:
@@ -35,7 +35,7 @@ export function generateReducer(types: Types): Reducer {
           ...state,
           result: payload.result || state.result,
           loading: false,
-          error: null,
+          error: '',
         }
 
       case types.archive.ok:
@@ -51,7 +51,7 @@ export function generateReducer(types: Types): Reducer {
           ...rest,
           entities,
           loading: false,
-          error: null,
+          error: '',
         }
 
       case types.get.fail:
