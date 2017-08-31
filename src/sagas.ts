@@ -19,12 +19,13 @@ export function generateSaga(schema: ModelSchema, types: Types, apiUrl: string) 
     // Query variables go in here
     variables?: any,
   ): Promise<any> {
+    const headers = new Headers()
+    headers.set('Accept', 'application/json')
+    headers.set('Content-Type', 'application/json')
+
     const fetchOptions = {
       method: 'POST',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-      },
+      headers,
       body: JSON.stringify({
         query: gqlQuery,
         // We're ignoring operationName here since I don't know what it does yet.
@@ -187,7 +188,7 @@ export function generateSaga(schema: ModelSchema, types: Types, apiUrl: string) 
         }
       `
 
-      const res = yield call(callApi, updateQuery, { input: { id, ...values }})
+      const res = yield call(callApi, updateQuery, { input: { id, ...values } })
       const normalized = normalize(res.data[`update${title}`], schema)
 
       yield put({

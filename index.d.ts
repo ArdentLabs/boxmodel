@@ -5,6 +5,7 @@
 import { schema } from 'normalizr'
 import { match } from 'react-router'
 import { RouterState } from 'react-router-redux'
+import { AllEffect } from 'redux-saga/effects'
 
 export class ModelSchema extends schema.Entity {
   constructor(key: string, definition?: Schema, options?: schema.EntityOptions)
@@ -21,8 +22,12 @@ export interface ModelComponents {
 }
 
 export default class BoxModel {
+<<<<<<< HEAD
   constructor(options: BoxModelOptions)
   private generate<Model>(schema: ModelSchema): Box<Model>
+=======
+  private generate<Model>(input: InputOptions): Box<Model>
+>>>>>>> 617542d94aaed2cd58a3beadaad049aa07993c7e
 }
 
 export interface BoxModelOptions {
@@ -86,7 +91,7 @@ export interface Filters {
 }
 
 export interface Sorts {
-  [field: string]: Boolean | Sorts
+  [field: string]: boolean | Sorts
 }
 
 export interface Pagination {
@@ -178,8 +183,7 @@ export interface Props<Model> {
 
 export type Selector<Model> = (state: any, props: Props<Model>) => any
 
-export interface Sagas {
-}
+export type Sagas = () => IterableIterator<AllEffect>
 
 export interface State {
   entities?: EntitiesState
