@@ -9,42 +9,42 @@ export function generateRouteFactory(options: Options): RouteFactory {
 
     if (Create) {
       routes.push({
-        path:`/:parentModel/:parentId/add-${modelName}`,
+        path: `/:parentModel/:parentId/add-${modelName}`,
         component: Create,
       })
     }
 
     if (Reorder) {
       routes.push({
-        path:`/:parentModel/:parentId/reorder-${modelName}`,
+        path: `/:parentModel/:parentId/reorder-${modelName}`,
         component: Reorder,
       })
     }
 
     if (Edit) {
       routes.push({
-        path:`/${modelName}/:id/edit`,
+        path: `/${modelName}/:id/edit`,
         component: Edit,
       })
     }
 
     if (Detail) {
       routes.push({
-        path:`/${modelName}/:id`,
+        path: `/${modelName}/:id`,
         component: Detail,
-      })
-    }
-
-    if (Table) {
-      routes.push({
-        path:`/add-${modelName}`,
-        component: Create,
       })
     }
 
     if (Create) {
       routes.push({
-        path:`/${modelName}`,
+        path: `/add-${modelName}`,
+        component: Create,
+      })
+    }
+
+    if (Table) {
+      routes.push({
+        path: `/${modelName}`,
         component: Table,
       })
     }
