@@ -13,6 +13,8 @@ import {
 } from '../index'
 import { generateRoutes } from './routes'
 
+export { default as Model } from './Model'
+
 export default class BoxModel {
   public reducer: ModelsReducer
   public reducers: ReducerMap
