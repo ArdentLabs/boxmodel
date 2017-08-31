@@ -1,5 +1,5 @@
 import { createSelector } from 'reselect'
-import { ModelsSelector, ModelState, ModelsState, JoinWith, Props, TransformFunc, Selectors } from '../index'
+import { ModelsSelector, ModelState, ModelsState, JoinWith, Props, TransformFunc, Selectors, Box } from '../index'
 import sort from 'sort-obj-array'
 
 /**
@@ -15,11 +15,12 @@ import sort from 'sort-obj-array'
  *
  *         ```
  *         joinWith = {
- *           course: {           // nesting! course also gets joind
- *             lessonPlan: true, // regular join
+ *           course: {            // nesting! course also gets joined
+ *             lessonPlan: true,  // regular join
  *           },
- *           student: 'user',    // custom join with different model name
- *           enrollments: true,  // array join
+ *           student: 'user',     // custom join with different model name
+ *           enrollments: true,   // array join
+ *           teachers: Instructor // custom join with a boxmodel
  *         }
  *         ```
  *
@@ -50,27 +51,31 @@ function join<Model>(model: any, joinWith: JoinWith | undefined, state: ModelsSt
     // I guess we could even use Normalizr schemas... meh, to be continued
     //
 
-    const submodel = model[key] || model[`${key}Id`]
+    const submodel = model[key]
 
     if (submodel) {
-      if (key.endsWith('s') && Array.isArray(submodel)) {
-        // Join an array
+      if (Array.isArray(submodel)) {
+        // `submodel` is an array of ids to be joined
+
         result[key] = submodel.map((id) => {
           const entity = state[key].entities[id]
 
           // Nested object recursion
           if (typeof value === 'object') {
-            return join<Model>(entity, value, state)
+            return join<Model>(entity, value as JoinWith, state)
           }
 
           return entity
         })
       } else {
+        // `submodel` is the id of the instance to be joined
+
         switch (typeof value) {
           case 'object':
-            if ((value as JoinWith).$$isBoxModel) {
-              // State data, used in ModelEdit
-              result[key] = state[key].entities[submodel]
+            const box = value as Box<any>
+            if ('$$isBoxModel' in box) {
+              // Given an input boxmodel
+              result[key] = state[box.modelName].entities[submodel]
             } else {
               // Nested object recursion
               result[key] = join<Model>(submodel, value as JoinWith, state)
@@ -85,7 +90,7 @@ function join<Model>(model: any, joinWith: JoinWith | undefined, state: ModelsSt
             result[key] = state[key].entities[submodel]
             break
           default:
-            throw new Error(`Value type '${typeof value}'not recognized`)
+            throw new Error(`Value type '${typeof value}' not recognized`)
         }
       }
     }

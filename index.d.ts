@@ -4,14 +4,13 @@
 
 import { schema } from 'normalizr'
 import { match } from 'react-router'
-import { RouterState } from 'react-router-redux'
 import { AllEffect } from 'redux-saga/effects'
 import { Selector } from 'reselect'
 
 export class ModelSchema extends schema.Entity {
+  public components: ModelComponents
   constructor(key: string, definition?: Schema, options?: schema.EntityOptions)
   public mount(components: ModelComponents): void
-  public components: ModelComponents
 }
 
 export interface ModelComponents {
@@ -118,8 +117,6 @@ export interface ReducerMap {
 
 export type Schema = schema.Entity
 
-export type RouteFactory = (components: ModelComponents) => Route[]
-
 export interface RouteProps {
   box: Box<any>,
 }
@@ -156,7 +153,7 @@ export interface Selectors<Model> {
 }
 
 export interface JoinWith {
-  [modelName: string]: boolean | string | JoinWith
+  [modelName: string]: boolean | string | JoinWith | Box<any>
 }
 
 export type TransformFunc<Model> = (model: Model) => any
@@ -178,8 +175,6 @@ export interface Props<Model> {
   filters?: Filters,
   sortBy: SortFunc<Model>,
 }
-
-export type Selector<Model> = (state: any, props: Props<Model>) => any
 
 export type Saga = (action: ModelAction<any>) => IterableIterator<AllEffect>
 

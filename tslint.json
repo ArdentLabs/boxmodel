@@ -4,6 +4,7 @@
   ],
   "rules": {
     "array-type": false,
+    "max-classes-per-file": [false],
     "no-console": [
       false
     ],
