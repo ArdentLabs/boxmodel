@@ -12,13 +12,13 @@ interface Entities {
   }
 }
 
-function* distributeEntities(normalized: Entities) {
-  const keys = Object.keys(normalized)
+function* distributeEntities(entities: Entities) {
+  const keys = Object.keys(entities)
 
   for (const key of keys) {
     yield put({
       type: getMergeType(key),
-      payload: { entities: normalized[key] },
+      payload: { entities: entities[key] },
     })
   }
 }
@@ -75,6 +75,7 @@ export function generateSaga(schema: ModelSchema, types: Types, apiUrl: string) 
       const getQuery = `
         query Get${title}($id: ID!) {
           ${name}(id: $id) {
+            id
             ${fields}
           }
         }
@@ -131,6 +132,7 @@ export function generateSaga(schema: ModelSchema, types: Types, apiUrl: string) 
       const fetchQuery = `
         query Fetch${title}($filter: Filters, $sort: Sorts) {
           ${pluralName}(filter: $filter, sort: $sort) {
+            id
             ${fields}
           }
         }
@@ -165,6 +167,7 @@ export function generateSaga(schema: ModelSchema, types: Types, apiUrl: string) 
       const createQuery = `
         mutation Create${title}($input: Create${title}Input!) {
           create${title}(input: $input) {
+            id
             ${fields}
           }
         }
@@ -207,6 +210,7 @@ export function generateSaga(schema: ModelSchema, types: Types, apiUrl: string) 
       const updateQuery = `
         mutation Update${title}($input: Update${title}Input!) {
           update${title}(input: $input) {
+            id
             ${fields}
           }
         }
@@ -249,6 +253,7 @@ export function generateSaga(schema: ModelSchema, types: Types, apiUrl: string) 
       const archiveQuery = `
         mutation Archive${title}($id: ID!) {
           archive${title}(id: $id) {
+            id
             ${fields}
           }
         }

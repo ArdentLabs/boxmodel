@@ -1,39 +1,56 @@
-import { ok } from 'assert'
-import BoxModel from './index'
-import { InputOptions } from '../index'
-import { schema } from 'normalizr'
+import * as assert from 'assert'
 
-describe('generate()', () => {
-  const options: InputOptions = {
-    modelName: 'car',
-    schema: new schema.Entity('cars'),
-  }
+import { combineReducers, createStore } from 'redux'
 
-  const box = new BoxModel({ apiUrl: 'localhost:3000' })
-  const res = box.generate(options)
+import BoxModel, { Model } from './index'
 
-  it('has $$isBoxModel', () => {
-    ok(res.$$isBoxModel)
+describe('boxmodel', () => {
+  const Parent = new Model('parent')
+  const Child = new Model('child')
+
+  Parent.define({
+    children: [Child]
   })
-  it('has actions', () => {
-    ok(res.actions)
+
+  Child.define({
+    parent: Parent
   })
-  it('has paths', () => {
-    ok(res.paths)
-  })
-  it('has reducer', () => {
-    ok(res.reducer)
-  })
-  it('has routes', () => {
-    ok(res.routes)
-  })
-  it('has sagas', () => {
-    ok(res.sagas)
-  })
-  it('has selectors', () => {
-    ok(res.selectors)
-  })
-  it('has types', () => {
-    ok(res.types)
+
+  it('should initialize', () => {
+    const boxmodel = new BoxModel({
+      apiUrl: '',
+      selector: (state) => state.boxes,
+      schemas: [
+        Parent,
+        Child
+      ]
+    })
+
+    const store = createStore(combineReducers({
+      boxes: boxmodel.reducer
+    }), {})
+
+    assert.deepEqual(store.getState(), {
+      boxes: {
+        parent: {
+          result: [],
+          entities: {},
+          loading: false,
+          error: ''
+        },
+        child: {
+          result: [],
+          entities: {},
+          loading: false,
+          error: ''
+        }
+      }
+    })
+
+    it('should provide routes', () => {
+      for (const route of boxmodel.routes) {
+        // TODO more testing
+      }
+    })
   })
 })
