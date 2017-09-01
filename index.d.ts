@@ -2,6 +2,7 @@
 // Project: boxmodel
 // Definitions by: Sam Balana <sam.balana@ardentacademy.com>
 
+import { ReactElement } from 'react'
 import { schema } from 'normalizr'
 import { match } from 'react-router'
 import { AllEffect } from 'redux-saga/effects'
@@ -22,7 +23,11 @@ export interface ModelComponents {
 }
 
 export default class BoxModel {
+  public reducer: ModelsReducer
+  public routes: Route[]
+  public sagas: Saga[]
   constructor(options: BoxModelOptions)
+  public withBox(schema: ModelSchema): (element: ReactElement<any>) => ReactElement<any>
   private generate<Model>(schema: ModelSchema): Box<Model>
 }
 

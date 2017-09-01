@@ -1,3 +1,4 @@
+import { cloneElement, ReactElement } from 'react'
 import { combineReducers } from 'redux'
 
 import { generateTypes } from './types'
@@ -17,9 +18,9 @@ export { default as Model } from './Model'
 
 export default class BoxModel {
   public reducer: ModelsReducer
-  public reducers: ReducerMap
   public routes: Route[]
   public sagas: Saga[]
+  private reducers: ReducerMap
   private boxes: BoxMap
   private options: BoxModelOptions
   private modelsSelector: ModelsSelector
@@ -34,10 +35,16 @@ export default class BoxModel {
     this.boxes = {}
 
     this.generate = this.generate.bind(this)
+    this.withBox = this.withBox.bind(this)
 
     options.schemas.map(this.generate)
 
     this.reducer = combineReducers(this.reducers)
+  }
+
+  public withBox(schema: ModelSchema) {
+    const box = this.boxes[schema.key]
+    return (element: ReactElement<any>) => cloneElement(element, { box })
   }
 
   /**
@@ -62,6 +69,7 @@ export default class BoxModel {
       types,
     }
 
+    this.boxes[key] = box
     this.reducers[key] = generateReducer(types)
     this.sagas.push(generateSaga(schema, types, this.options.apiUrl))
     this.routes.push(...generateRoutes(key, components, box))

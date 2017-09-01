@@ -18,10 +18,12 @@
   "author": "Sam Balana <sam.balana@ardentacademy.com>",
   "license": "ISC",
   "dependencies": {
+    "@types/react": "^16.0.5",
     "@types/react-router-redux": "^5.0.7",
     "deepmerge": "^1.5.1",
     "normalizr": "^3.2.3",
     "pluralize": "^7.0.0",
+    "react": "^15.6.1",
     "redux": "^3.7.2",
     "redux-saga": "^0.15.6",
     "reselect": "^3.0.1",
