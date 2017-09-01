@@ -3,103 +3,6 @@ import { ModelsSelector, ModelState, ModelsState, JoinWith, Props, TransformFunc
 import sort from 'sort-obj-array'
 
 /**
- * This is a recursive funciton that joins a model with child models.
- *
- * Used in `getJoinedModel` and `getJoinedModels`.
- *
- * @param  {object} model
- *         The model to join
- * @param  {object} joinWith
- *         An object specifying which models will be joind within the
- *         original
- *
- *         ```
- *         joinWith = {
- *           course: {            // nesting! course also gets joined
- *             lessonPlan: true,  // regular join
- *           },
- *           student: 'user',     // custom join with different model name
- *           enrollments: true,   // array join
- *           teachers: Instructor // custom join with a boxmodel
- *         }
- *         ```
- *
- * @param  {object} state
- *         Redux state
- * @return {object}
- *         The final model object, with all joined models merged in
- */
-function join<Model>(model: any, joinWith: JoinWith | undefined, state: ModelsState) {
-  if (!model || !joinWith) {
-    return model
-  }
-
-  interface JoinResult {
-    [key: string]: any
-  }
-
-  const result: JoinResult = {}
-
-  for (const key of Object.keys(joinWith)) {
-    const value = joinWith[key]
-
-    //
-    // Can be simplified if we use the schemas created by Thinky.
-    // Although this requires both the backend and frontend repos to be
-    // combined.
-    //
-    // I guess we could even use Normalizr schemas... meh, to be continued
-    //
-
-    const submodel = model[key]
-
-    if (submodel) {
-      if (Array.isArray(submodel)) {
-        // `submodel` is an array of ids to be joined
-
-        result[key] = submodel.map((id) => {
-          const entity = state[key].entities[id]
-
-          // Nested object recursion
-          if (typeof value === 'object') {
-            return join<Model>(entity, value as JoinWith, state)
-          }
-
-          return entity
-        })
-      } else {
-        // `submodel` is the id of the instance to be joined
-
-        switch (typeof value) {
-          case 'object':
-            const box = value as Box<any>
-            if ('$$isBoxModel' in box) {
-              // Given an input boxmodel
-              result[key] = state[box.modelName].entities[submodel]
-            } else {
-              // Nested object recursion
-              result[key] = join<Model>(submodel, value as JoinWith, state)
-            }
-            break
-          case 'string':
-            // Custom Redux store location
-            result[key] = state[value as string].entities[submodel]
-            break
-          case 'boolean':
-            // Simply join from Redux store with default key name
-            result[key] = state[key].entities[submodel]
-            break
-          default:
-            throw new Error(`Value type '${typeof value}' not recognized`)
-        }
-      }
-    }
-  }
-
-  return Object.assign({}, model, result)
-}
-
-/**
  * Generates functions for selecting certain portions of the Redux state for a
  * model type.
  */
@@ -135,6 +38,16 @@ export function generateSelectors<Model>(modelName: string, modelsSelector: Mode
   const getLoading = createSelector(
     getState,
     (state) => state.loading
+  )
+
+  const getError = createSelector(
+    getState,
+    (state) => state.error,
+  )
+
+  const getResult = createSelector(
+    getState,
+    (state) => state.result,
   )
 
   /**
@@ -176,8 +89,9 @@ export function generateSelectors<Model>(modelName: string, modelsSelector: Mode
    * Get an array of models.
    */
   const getModels = createSelector(
+    getResult,
     getEntities,
-    (entities) => Object.keys(entities)
+    (result, entities) => result
       .map((id) => entities[id])
       .filter((obj) => !obj.archivedOn)
     // TODO (Sam): Add option for viewing archived models.
@@ -288,8 +202,106 @@ export function generateSelectors<Model>(modelName: string, modelsSelector: Mode
   return {
     id: getId,
     loading: getLoading,
+    error: getError,
     model: getJoinedModel,
     models: getSortedModels,
     filters: getFilters,
   }
+}
+
+/**
+ * This is a recursive funciton that joins a model with child models.
+ *
+ * Used in `getJoinedModel` and `getJoinedModels`.
+ *
+ * @param  {object} model
+ *         The model to join
+ * @param  {object} joinWith
+ *         An object specifying which models will be joind within the
+ *         original
+ *
+ *         ```
+ *         joinWith = {
+ *           course: {            // nesting! course also gets joined
+ *             lessonPlan: true,  // regular join
+ *           },
+ *           student: 'user',     // custom join with different model name
+ *           enrollments: true,   // array join
+ *           teachers: Instructor // custom join with a boxmodel
+ *         }
+ *         ```
+ *
+ * @param  {object} state
+ *         Redux state
+ * @return {object}
+ *         The final model object, with all joined models merged in
+ */
+function join<Model>(model: any, joinWith: JoinWith | undefined, state: ModelsState) {
+  if (!model || !joinWith) {
+    return model
+  }
+
+  interface JoinResult {
+    [key: string]: any
+  }
+
+  const result: JoinResult = {}
+
+  for (const key of Object.keys(joinWith)) {
+    const value = joinWith[key]
+
+    //
+    // Can be simplified if we use the schemas created by Thinky.
+    // Although this requires both the backend and frontend repos to be
+    // combined.
+    //
+    // I guess we could even use Normalizr schemas... meh, to be continued
+    //
+
+    const submodel = model[key]
+
+    if (submodel) {
+      if (Array.isArray(submodel)) {
+        // `submodel` is an array of ids to be joined
+
+        result[key] = submodel.map((id) => {
+          const entity = state[key].entities[id]
+
+          // Nested object recursion
+          if (typeof value === 'object') {
+            return join<Model>(entity, value as JoinWith, state)
+          }
+
+          return entity
+        })
+      } else {
+        // `submodel` is the id of the instance to be joined
+
+        switch (typeof value) {
+          case 'object':
+            const box = value as Box<any>
+            if ('$$isBoxModel' in box) {
+              // Given an input boxmodel
+              result[key] = state[box.modelName].entities[submodel]
+            } else {
+              // Nested object recursion
+              result[key] = join<Model>(submodel, value as JoinWith, state)
+            }
+            break
+          case 'string':
+            // Custom Redux store location
+            result[key] = state[value as string].entities[submodel]
+            break
+          case 'boolean':
+            // Simply join from Redux store with default key name
+            result[key] = state[key].entities[submodel]
+            break
+          default:
+            throw new Error(`Value type '${typeof value}' not recognized`)
+        }
+      }
+    }
+  }
+
+  return Object.assign({}, model, result)
 }

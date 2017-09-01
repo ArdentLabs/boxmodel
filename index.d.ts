@@ -153,6 +153,7 @@ export interface Types {
 export interface Selectors<Model> {
   id: any
   loading: any
+  error: any
   model: any
   models: any
   filters: any
