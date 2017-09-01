@@ -26,6 +26,8 @@ function* distributeEntities(entities: Entities) {
 const pathnameSelector = (state: any) =>
   (state.router && state.router.location && state.router.location.pathname)
 
+const formatError = (err: any) => err.message || err.toString() || 'Unknown error'
+
 export function generateSaga(schema: ModelSchema, types: Types, apiUrl: string) {
   const name = schema.key
   const pluralName = pluralize(name)
@@ -96,7 +98,7 @@ export function generateSaga(schema: ModelSchema, types: Types, apiUrl: string) 
     } catch (err) {
       yield put({
         type: types.get.fail,
-        payload: err,
+        payload: formatError(err),
         error: true,
       })
     }
@@ -150,7 +152,7 @@ export function generateSaga(schema: ModelSchema, types: Types, apiUrl: string) 
     } catch (err) {
       yield put({
         type: types.fetch.fail,
-        payload: err,
+        payload: formatError(err),
         error: true,
       })
     }
@@ -204,7 +206,7 @@ export function generateSaga(schema: ModelSchema, types: Types, apiUrl: string) 
     } catch (err) {
       yield put({
         type: types.create.fail,
-        payload: err,
+        payload: formatError(err),
         error: true,
       })
     }
@@ -247,7 +249,7 @@ export function generateSaga(schema: ModelSchema, types: Types, apiUrl: string) 
       console.error(err)
       yield put({
         type: types.update.fail,
-        payload: err,
+        payload: formatError(err),
         error: true,
       })
     }
@@ -286,7 +288,7 @@ export function generateSaga(schema: ModelSchema, types: Types, apiUrl: string) 
     } catch (err) {
       yield put({
         type: types.archive.fail,
-        payload: err,
+        payload: formatError(err),
         error: true,
       })
     }
