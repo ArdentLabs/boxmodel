@@ -120,7 +120,7 @@ export function generateSaga(schema: ModelSchema, types: Types, apiUrl: string) 
       const tokens = pathname.split('/')
 
       if (tokens.length === 4) {
-        // URL matches /:parentName/:parentId/:modelName
+        // URL matches /:parentName/:parentId/
         const parentName = tokens[1]
         const parentId = tokens[2]
         // Filter by the parent
@@ -128,7 +128,7 @@ export function generateSaga(schema: ModelSchema, types: Types, apiUrl: string) 
       } else if (tokens.length === 2) {
         // URL matches /:modelName
       } else {
-        throw new Error('Unknown URL format, cannot determine if there is a parent')
+        throw new Error(`Unknown URL format: ${pathname}`)
       }
 
       const fetchQuery = `
@@ -169,8 +169,8 @@ export function generateSaga(schema: ModelSchema, types: Types, apiUrl: string) 
       const pathname = yield select(pathnameSelector)
       const tokens = pathname.split('/')
 
-      if (tokens.length === 4) {
-        // URL matches /:parentName/:parentId/add-${modelName}
+      if (tokens.length === 5) {
+        // URL matches /:parentName/:parentId/add-${modelName}/
         const parentName = tokens[1]
         const parentId = tokens[2]
         // Add the parent to the values to create with
@@ -178,7 +178,7 @@ export function generateSaga(schema: ModelSchema, types: Types, apiUrl: string) 
       } else if (tokens.length === 2) {
         // URL matches /add-${modelName}
       } else {
-        throw new Error('Unknown URL format, cannot determine if there is a parent')
+        throw new Error(`Unknown URL format: ${pathname}`)
       }
 
       const createQuery = `
