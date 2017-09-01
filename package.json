@@ -1,6 +1,6 @@
 {
   "name": "boxmodel",
-  "version": "2.2.2",
+  "version": "2.2.3",
   "description": "API to abstract models, generating common functionality",
   "main": "dist/index.js",
   "typings": "index.d.ts",
@@ -13,7 +13,8 @@
     "build": "tsc",
     "lint": "tslint -c tslint.json -p tsconfig.json",
     "lint-fix": "tslint -c tslint.json -p tsconfig.json --fix",
-    "test": "mocha -r ts-node/register src/**/*.spec.ts"
+    "test": "mocha -r ts-node/register src/**/*.spec.ts",
+    "publish": "npm run build && npm publish"
   },
   "author": "Sam Balana <sam.balana@ardentacademy.com>",
   "license": "ISC",
