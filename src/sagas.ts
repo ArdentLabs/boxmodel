@@ -23,6 +23,9 @@ function* distributeEntities(entities: Entities) {
   }
 }
 
+const pathnameSelector = (state: any) =>
+  (state.router && state.router.location && state.router.location.pathname)
+
 export function generateSaga(schema: ModelSchema, types: Types, apiUrl: string) {
   const name = schema.key
   const pluralName = pluralize(name)
@@ -111,11 +114,8 @@ export function generateSaga(schema: ModelSchema, types: Types, apiUrl: string) 
       const filter = variables.filter || {}
       const page = variables.page || {}
 
-      const router = yield select((state: any) =>
-        state.router && state.router.location && state.router.location.pathname
-      )
-
-      const tokens = router.split('/')
+      const pathname = yield select(pathnameSelector)
+      const tokens = pathname.split('/')
 
       if (tokens.length === 4) {
         // URL matches /:parentName/:parentId/:modelName
@@ -163,6 +163,21 @@ export function generateSaga(schema: ModelSchema, types: Types, apiUrl: string) 
       const fields = typeof action.payload.fields === 'string'
         ? action.payload.fields
         : Object.keys(values).join('\n')
+
+      const pathname = yield select(pathnameSelector)
+      const tokens = pathname.split('/')
+
+      if (tokens.length === 4) {
+        // URL matches /:parentName/:parentId/add-${modelName}
+        const parentName = tokens[1]
+        const parentId = tokens[2]
+        // Add the parent to the values to create with
+        values[`${parentName}Id`] = parentId
+      } else if (tokens.length === 2) {
+        // URL matches /add-${modelName}
+      } else {
+        throw new Error('Unknown URL format, cannot determine if there is a parent')
+      }
 
       const createQuery = `
         mutation Create${title}($input: Create${title}Input!) {

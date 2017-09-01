@@ -27,7 +27,6 @@ export function generateReducer<Model>(types: Types): Reducer<Model> {
           loading: true,
         }
 
-
       case types.fetch.ok:
         return {
           ...state,
