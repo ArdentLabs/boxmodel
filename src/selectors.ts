@@ -78,11 +78,7 @@ export function generateSelectors<Model>(modelName: string, modelsSelector: Mode
   const getJoinedModel = createSelector(
     getModel,
     getJoinWith,
-<<<<<<< HEAD
     modelsSelector,
-=======
-    getState,
->>>>>>> e6f51140e95d4b2e92a36fea52b95e89552d3d8c
     (model, joinWith, state) => {
       const result = join<Model>(model, joinWith, state)
       return result
@@ -107,11 +103,7 @@ export function generateSelectors<Model>(modelName: string, modelsSelector: Mode
   const getJoinedModels = createSelector(
     getModels,
     getJoinWith,
-<<<<<<< HEAD
     modelsSelector,
-=======
-    getState,
->>>>>>> e6f51140e95d4b2e92a36fea52b95e89552d3d8c
     (models, joinWith, state) =>
       models.map((model) =>
         join<Model>(model, joinWith, state)
