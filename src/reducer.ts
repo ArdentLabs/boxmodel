@@ -27,13 +27,21 @@ export function generateReducer<Model>(types: Types): Reducer<Model> {
           loading: true,
         }
 
+
       case types.get.ok:
       case types.fetch.ok:
+        return {
+          ...state,
+          result: payload.result as ReadonlyArray<string>,
+          loading: false,
+          error: '',
+        }
+
       case types.create.ok:
       case types.update.ok:
         return {
           ...state,
-          result: payload.result || state.result,
+          result: [payload.result] as ReadonlyArray<string>,
           loading: false,
           error: '',
         }

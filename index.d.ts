@@ -74,7 +74,7 @@ export interface ActionPayload {
   params?: any
   message?: string
   filters?: any
-  result?: ReadonlyArray<string>,
+  result?: ReadonlyArray<string> | string,
   sorts?: any
   values?: any
   variables?: any
