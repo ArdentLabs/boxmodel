@@ -46,6 +46,7 @@ export interface Box<Model> {
   $$isBoxModel: true
   actions: Actions<Model>
   modelName: string
+  modelTitle: string
   paths: Paths
   selectors: Selectors<Model>
   types: Types

@@ -16,6 +16,12 @@ import { generateRoutes } from './routes'
 
 export { default as Model } from './Model'
 
+function toTitle(camelCase: string): string {
+  const words = camelCase.split(/(?=[A-Z])/)
+  words[0] = words[0].substr(0, 1).toUpperCase() + words[0].substr(1)
+  return words.join(' ')
+}
+
 export default class BoxModel {
   public reducer: ModelsReducer
   public routes: Route[]
@@ -64,6 +70,7 @@ export default class BoxModel {
       $$isBoxModel: true,
       actions,
       modelName: key,
+      modelTitle: toTitle(key),
       paths,
       selectors,
       types,
