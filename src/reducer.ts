@@ -28,7 +28,6 @@ export function generateReducer<Model>(types: Types): Reducer<Model> {
         }
 
 
-      case types.get.ok:
       case types.fetch.ok:
         return {
           ...state,
@@ -37,6 +36,7 @@ export function generateReducer<Model>(types: Types): Reducer<Model> {
           error: '',
         }
 
+      case types.get.ok:
       case types.create.ok:
       case types.update.ok:
         return {
