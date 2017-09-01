@@ -14,7 +14,8 @@
     "lint": "tslint -c tslint.json -p tsconfig.json",
     "lint-fix": "tslint -c tslint.json -p tsconfig.json --fix",
     "test": "mocha -r ts-node/register src/**/*.spec.ts",
-    "publish": "npm run build && npm publish"
+    "publish": "npm run build && npm publish",
+    "version": "npm run build"
   },
   "author": "Sam Balana <sam.balana@ardentacademy.com>",
   "license": "ISC",
