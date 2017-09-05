@@ -1,8 +1,28 @@
-import assert from 'assert'
+import * as assert from 'assert'
 
 import { combineReducers, createStore } from 'redux'
 
 import BoxModel, { Model } from './index'
+
+import { toGraphQLString } from './sagas'
+
+describe('gql query generator', () => {
+  it ('works as expected', () => {
+    const gqlString = toGraphQLString({
+      id: true,
+      foo: true,
+      nested: {
+        works: true
+      }
+    })
+
+    assert.equal(gqlString, `   id
+    foo
+    nested {
+      works
+    }`)
+  })
+})
 
 describe('boxmodel', () => {
   const Parent = new Model('parent')

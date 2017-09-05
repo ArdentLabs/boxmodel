@@ -4,7 +4,7 @@ import { plural } from 'pluralize'
 
 import { goBack } from './actions'
 import { getMergeType } from './types'
-import { ModelSchema, Types, Action } from '../index'
+import { Action, ModelSchema, Types } from '../index'
 
 interface Entities {
   [modelName: string]: {
@@ -27,6 +27,35 @@ const pathnameSelector = (state: any) =>
   (state.router && state.router.location && state.router.location.pathname)
 
 const formatError = (err: any) => err.message || err.toString() || 'Unknown error'
+
+interface Fields {
+  [key: string]: boolean | Fields
+}
+
+type FieldsParser = (fields: Fields, indent?: number) => string
+
+export const toGraphQLString: FieldsParser = (fields, indent = 2) => {
+  const fieldNames = Object.keys(fields)
+  const fieldList = []
+  const indentationSpaces = new Array(indent).fill('\t').join('')
+
+  for (const fieldName of fieldNames) {
+    if (typeof fields[fieldName] === 'object') {
+      // Nested field
+      fieldList.push([
+        `${indentationSpaces}${fieldName} {`,
+        toGraphQLString(fields[fieldName] as Fields, indent + 1),
+        `${indentationSpaces}}`
+      ].join('\n'))
+    }
+    else if (fields[fieldName]) {
+      // Simple field
+      fieldList.push(`${indentationSpaces}${fieldName}`)
+    }
+  }
+
+  return fieldList.join('\n')
+}
 
 export function generateSaga(schema: ModelSchema, types: Types, apiUrl: string) {
   const name = schema.key
