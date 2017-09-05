@@ -13,7 +13,6 @@ export default {
   name: 'boxmodel',
   input: 'src/index.ts',
   output: [
-
     { file: `${destBase}${destExtension}`, format: 'cjs' },
     { file: `${destBase}.umd${destExtension}`, format: 'umd' },
     { file: `${destBase}.amd${destExtension}`, format: 'amd' },
@@ -21,7 +20,9 @@ export default {
   ],
   plugins: [
     typescript(),
-    babel({ babelrc: false, presets: [ 'es2015-rollup', 'stage-1' ] }),
+    babel({
+      exclude: 'node_modules/**'
+    }),
     isProduction && uglify({}, minify),
     filesize()
   ].filter((plugin) => !!plugin)
