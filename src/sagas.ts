@@ -4,7 +4,7 @@ import { plural } from 'pluralize'
 
 import { goBack } from './actions'
 import { getMergeType } from './types'
-import { Action, ModelSchema, Types } from '../index'
+import { Action, ModelSchema, Selectors, Types } from '../index'
 
 interface Entities {
   [modelName: string]: {
@@ -28,36 +28,26 @@ const pathnameSelector = (state: any) =>
 
 const formatError = (err: any) => err.message || err.toString() || 'Unknown error'
 
-interface Fields {
-  [key: string]: boolean | Fields
-}
+type Diff = (original: any, updated: any) => any
 
-type FieldsParser = (fields: Fields, indent?: number) => string
+export const diff: Diff = (original, updated) => {
+  if (typeof original === 'object' && typeof updated === 'object') {
+    // Deep diff
+    const output: any = {}
 
-export const toGraphQLString: FieldsParser = (fields, indent = 2) => {
-  const fieldNames = Object.keys(fields)
-  const fieldList = []
-  const indentationSpaces = new Array(indent).fill('\t').join('')
-
-  for (const fieldName of fieldNames) {
-    if (typeof fields[fieldName] === 'object') {
-      // Nested field
-      fieldList.push([
-        `${indentationSpaces}${fieldName} {`,
-        toGraphQLString(fields[fieldName] as Fields, indent + 1),
-        `${indentationSpaces}}`
-      ].join('\n'))
+    for (const key in updated) {
+      if (key in original && updated[key] !== original[key]) {
+        output[key] = diff(original[key], updated[key])
+      }
     }
-    else if (fields[fieldName]) {
-      // Simple field
-      fieldList.push(`${indentationSpaces}${fieldName}`)
-    }
+    return output
   }
-
-  return fieldList.join('\n')
+  else {
+    return updated
+  }
 }
 
-export function generateSaga(schema: ModelSchema, types: Types, apiUrl: string) {
+export function generateSaga(schema: ModelSchema, types: Types, selectors: Selectors<any>, apiUrl: string) {
   const name = schema.key
   const pluralName = plural(name)
 
@@ -262,7 +252,8 @@ export function generateSaga(schema: ModelSchema, types: Types, apiUrl: string) 
         }
       `
 
-      const res = yield call(callApi, updateQuery, { input: { id, ...values } })
+      const currentValues = yield select((state) => selectors.model(state, { id }))
+      const res = yield call(callApi, updateQuery, { input: { id, ...diff(currentValues, values) } })
       const { entities, result } = normalize(res.data[`update${title}`], schema)
 
       yield* distributeEntities(entities)

@@ -78,7 +78,7 @@ export default class BoxModel {
 
     this.boxes[key] = box
     this.reducers[key] = generateReducer(types)
-    this.sagas.push(generateSaga(schema, types, this.options.apiUrl))
+    this.sagas.push(generateSaga(schema, types, selectors, this.options.apiUrl))
     this.routes.push(...generateRoutes(key, components, box))
   }
 }

@@ -4,23 +4,33 @@ import { combineReducers, createStore } from 'redux'
 
 import BoxModel, { Model } from './index'
 
-import { toGraphQLString } from './sagas'
+import { diff } from './sagas'
 
-describe('gql query generator', () => {
-  it ('works as expected', () => {
-    const gqlString = toGraphQLString({
-      id: true,
-      foo: true,
-      nested: {
-        works: true
+describe('diffing algorithm', () => {
+  it('should work', () => {
+    const difference = diff({
+      foo: 'unchanged',
+      bar: 'update this',
+      baz: 'deleted',
+      deep: {
+        update: 'should work',
+        deletion: 'ignored'
+      }
+    }, {
+      foo: 'unchanged',
+      bar: 'updated',
+      deep: {
+        update: 'works',
+        add: 'ignored'
       }
     })
 
-    assert.equal(gqlString, `   id
-    foo
-    nested {
-      works
-    }`)
+    assert.deepEqual(difference, {
+      bar: 'updated',
+      deep: {
+        update: 'works'
+      }
+    })
   })
 })
 
