@@ -1,3 +1,4 @@
+import babel from 'rollup-plugin-babel';
 import filesize from 'rollup-plugin-filesize'
 import uglify from 'rollup-plugin-uglify'
 import typescript from 'rollup-plugin-typescript2'
@@ -12,6 +13,7 @@ export default {
   name: 'boxmodel',
   input: 'src/index.ts',
   output: [
+
     { file: `${destBase}${destExtension}`, format: 'cjs' },
     { file: `${destBase}.umd${destExtension}`, format: 'umd' },
     { file: `${destBase}.amd${destExtension}`, format: 'amd' },
@@ -19,6 +21,7 @@ export default {
   ],
   plugins: [
     typescript(),
+    babel({ babelrc: false, presets: [ 'es2015-rollup', 'stage-1' ] }),
     isProduction && uglify({}, minify),
     filesize()
   ].filter((plugin) => !!plugin)
