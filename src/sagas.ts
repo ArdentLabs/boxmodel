@@ -175,8 +175,8 @@ export function generateSaga(schema: ModelSchema, types: Types, apiUrl: string) 
         const parentId = tokens[2]
         // Add the parent to the values to create with
         values[`${parentName}Id`] = parentId
-      } else if (tokens.length === 2) {
-        // URL matches /add-${modelName}
+      } else if (tokens.length === 3) {
+        // URL matches /add-${modelName}/
       } else {
         throw new Error(`Unknown URL format: ${pathname}`)
       }
