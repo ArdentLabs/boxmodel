@@ -1,10 +1,11 @@
 import filesize from 'rollup-plugin-filesize'
 import uglify from 'rollup-plugin-uglify'
 import typescript from 'rollup-plugin-typescript2'
+import { minify } from 'uglify-es'
 
 const isProduction = process.env.NODE_ENV === 'production'
 
-const destBase = 'dist'
+const destBase = 'dist/boxmodel'
 const destExtension = `${isProduction ? '.min' : ''}.js`
 
 export default {
@@ -18,7 +19,7 @@ export default {
   ],
   plugins: [
     typescript(),
-    isProduction && uglify(),
+    isProduction && uglify({}, minify),
     filesize()
   ].filter((plugin) => !!plugin)
 }
