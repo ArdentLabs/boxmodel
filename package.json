@@ -1,6 +1,6 @@
 {
   "name": "boxmodel",
-  "version": "2.2.11",
+  "version": "2.2.12",
   "description": "API to abstract models, generating common functionality",
   "main": "dist/boxmodel.js",
   "typings": "index.d.ts",
