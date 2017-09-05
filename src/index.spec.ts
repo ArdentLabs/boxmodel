@@ -1,4 +1,4 @@
-import * as assert from 'assert'
+import assert from 'assert'
 
 import { combineReducers, createStore } from 'redux'
 
@@ -48,9 +48,11 @@ describe('boxmodel', () => {
     })
 
     it('should provide routes', () => {
+      /*
       for (const route of boxmodel.routes) {
         // TODO more testing
       }
+      */
     })
   })
 })

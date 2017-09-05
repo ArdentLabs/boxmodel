@@ -1,4 +1,4 @@
-import * as deepmerge from 'deepmerge'
+import deepmerge from 'deepmerge'
 
 import { ModelState, Action, Types, Reducer } from '../index'
 

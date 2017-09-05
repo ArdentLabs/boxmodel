@@ -1,6 +1,6 @@
 import { all, call, put, select, takeLatest } from 'redux-saga/effects'
 import { normalize } from 'normalizr'
-import * as pluralize from 'pluralize'
+import { plural } from 'pluralize'
 
 import { goBack } from './actions'
 import { getMergeType } from './types'
@@ -30,7 +30,7 @@ const formatError = (err: any) => err.message || err.toString() || 'Unknown erro
 
 export function generateSaga(schema: ModelSchema, types: Types, apiUrl: string) {
   const name = schema.key
-  const pluralName = pluralize(name)
+  const pluralName = plural(name)
 
   const title = name.substr(0, 1).toUpperCase() + name.substr(1)
   const url = apiUrl + '/graphql'
