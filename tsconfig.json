@@ -1,6 +1,5 @@
 {
   "compilerOptions": {
-    "jsx": "react",
     "target": "es6",
     "moduleResolution": "node",
     "allowSyntheticDefaultImports": true,
@@ -9,7 +8,7 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "sourceMap": true,
-    "outDir": "dist",
+    "outDir": "compiled",
     "baseUrl": ".",
     "paths": {
       "*": [

@@ -1,4 +1,5 @@
-import { cloneElement, ReactElement } from 'react'
+import 'babel-polyfill'
+import * as React from 'react'
 import { combineReducers } from 'redux'
 
 import { generateTypes } from './types'
@@ -50,7 +51,7 @@ export default class BoxModel {
 
   public withBox(schema: ModelSchema) {
     const box = this.boxes[schema.key]
-    return (element: ReactElement<any>) => cloneElement(element, { box })
+    return (element: React.ReactElement<any>) => React.cloneElement(element, { box })
   }
 
   /**

@@ -3,14 +3,14 @@
 // Definitions by: Sam Balana <sam.balana@ardentacademy.com>
 
 import { ReactElement } from 'react'
-import { schema } from 'normalizr'
+import * as normalizr from 'normalizr'
 import { match } from 'react-router'
 import { AllEffect } from 'redux-saga/effects'
 import { Selector } from 'reselect'
 
-export class ModelSchema extends schema.Entity {
+export class ModelSchema extends normalizr.schema.Entity {
   public components: ModelComponents
-  constructor(key: string, definition?: Schema, options?: schema.EntityOptions)
+  constructor(key: string, definition?: Schema, options?: normalizr.schema.EntityOptions)
   public mount(components: ModelComponents): void
 }
 
@@ -121,7 +121,7 @@ export interface ReducerMap {
   [modelName: string]: Reducer<any>
 }
 
-export type Schema = schema.Entity
+export type Schema = normalizr.schema.Entity
 
 export interface RouteProps {
   box: Box<any>,

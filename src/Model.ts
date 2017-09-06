@@ -1,10 +1,10 @@
-import { schema, Schema } from 'normalizr'
+import * as normalizr from 'normalizr'
 import { ModelComponents } from '../index'
 
-class Model extends schema.Entity {
+class Model extends normalizr.schema.Entity {
   public components: ModelComponents
 
-  constructor(key: string, definition?: Schema, options?: schema.EntityOptions) {
+  constructor(key: string, definition?: normalizr.Schema, options?: normalizr.schema.EntityOptions) {
     super(key, definition, options)
     this.components = {
       Table: null,

@@ -1,6 +1,6 @@
 import { createSelector } from 'reselect'
 import { ModelsSelector, ModelState, ModelsState, JoinWith, Props, TransformFunc, Selectors, Box } from '../index'
-import sort from 'sort-obj-array'
+import * as sort from 'sort-obj-array'
 
 /**
  * Generates functions for selecting certain portions of the Redux state for a
@@ -192,7 +192,7 @@ export function generateSelectors<Model>(modelName: string, modelsSelector: Mode
         case 'object':
         case 'string':
         case 'function':
-          return sort(models, sortBy)
+          return sort.default(models, sortBy)
         default:
           return models
       }
