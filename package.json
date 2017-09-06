@@ -1,6 +1,6 @@
 {
   "name": "boxmodel",
-  "version": "3.0.1",
+  "version": "3.0.2",
   "description": "API to abstract models, generating common functionality",
   "main": "dist/boxmodel.umd.js",
   "module": "dist/boxmodel.es5.js",
@@ -11,8 +11,8 @@
     "index.d.ts"
   ],
   "repository": {
-    "type" : "git",
-    "url" : "https://github.com/ArdentLabs/gradebook-api"
+    "type": "git",
+    "url": "https://github.com/ArdentLabs/gradebook-api"
   },
   "scripts": {
     "start": "mocha -w --watch-extensions ts -r ts-node/register src/**/*.spec.ts",
