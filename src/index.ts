@@ -23,7 +23,7 @@ function toTitle(camelCase: string): string {
   return words.join(' ')
 }
 
-export default class BoxModel {
+export class BoxModel {
   public reducer: ModelsReducer
   public routes: Route[]
   public sagas: Saga[]
