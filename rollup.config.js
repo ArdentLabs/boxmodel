@@ -25,10 +25,13 @@ export default {
   plugins: [
     resolve({
       jsnext: true,
+      browser: true,
     }),
     commonjs({
-      exclude: 'node_modules/**',
-      plugins: ['external-helpers'],
+      namedExports: {
+        'node_modules/react/react.js': ['cloneElement'],
+        'node_modules/pluralize/pluralize.js': ['plural'],
+      }
     }),
     typescript(),
     babel({
