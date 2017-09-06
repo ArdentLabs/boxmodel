@@ -2,7 +2,7 @@ import * as assert from 'assert'
 
 import { combineReducers, createStore } from 'redux'
 
-import BoxModel, { Model } from './index'
+import { BoxModel, Model } from './index'
 
 import { diff } from './sagas'
 

@@ -20,22 +20,25 @@ export default {
     { file: `${destBase}${destExtension}`, format: 'cjs' },
     { file: `${destBase}.umd${destExtension}`, format: 'umd' },
     { file: `${destBase}.amd${destExtension}`, format: 'amd' },
-    { file: `${destBase}.browser${destExtension}`, format: 'iife' }
+    { file: `${destBase}.es5${destExtension}`, format: 'es' },
+    { file: `${destBase}.iife${destExtension}`, format: 'iife' }
   ],
   plugins: [
+    typescript(),
     resolve({
       jsnext: true,
       browser: true,
     }),
     commonjs({
+      include: "node_modules/**",
       namedExports: {
         'node_modules/react/react.js': ['cloneElement'],
         'node_modules/pluralize/pluralize.js': ['plural'],
-      }
+      },
     }),
-    typescript(),
     babel({
-      exclude: 'node_modules/**'
+      exclude: 'node_modules/**',
+      runtimeHelpers: true,
     }),
     replace({
       'process.env.NODE_ENV': JSON.stringify(env),
