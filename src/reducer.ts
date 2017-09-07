@@ -1,8 +1,39 @@
-import { default as deepmerge } from 'deepmerge'
+import { Action, Entities } from './actions'
+import { Types } from './types'
 
-import { ModelState, Action, Types, Reducer } from '../index'
+export interface ModelState<Model> {
+  result: ReadonlyArray<string>
+  entities: Entities<Model>
+  loading: boolean
+  error: string
+}
 
-export function generateReducer<Model>(types: Types): Reducer<Model> {
+export interface ModelAction<Model> extends Action {
+  type: string
+  payload: {
+    id?: string
+    result?: ReadonlyArray<string> | string
+    entities: Entities<Model>
+    message?: string
+  }
+}
+
+export type ModelReducer<Model> = (state: ModelState<Model>, action: ModelAction<Model>) => ModelState<Model>
+
+function mergeEntities<Model>(state: Entities<Model>, entities: Entities<Model>) {
+  const result = Object.assign({}, state)
+
+  for (const modelName of Object.keys(entities)) {
+    result[modelName] = {
+      ...result[modelName],
+      ...entities[modelName],
+    }
+  }
+
+  return result
+}
+
+export function generateReducer<Model>(types: Types): ModelReducer<Model> {
   const initialState: ModelState<Model> = {
     result: [],
     entities: {},
@@ -10,12 +41,16 @@ export function generateReducer<Model>(types: Types): Reducer<Model> {
     error: '',
   }
 
-  return (state: ModelState<Model> = initialState, action: Action) => {
+  return (state: ModelState<Model> = initialState, action: ModelAction<Model>) => {
     const { type, payload } = action
 
     switch (type) {
       case types.merge:
-        return deepmerge(state, payload as ModelState<Model>)
+        return {
+          ...state,
+          result: payload.result as ReadonlyArray<string>,
+          entities: mergeEntities(state.entities, payload.entities as Entities<Model>),
+        }
 
       case types.get.request:
       case types.fetch.request:

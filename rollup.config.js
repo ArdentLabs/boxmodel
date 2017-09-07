@@ -24,7 +24,9 @@ export default {
     { file: `${destBase}.iife${destExtension}`, format: 'iife' }
   ],
   plugins: [
-    typescript(),
+    typescript({
+      useTsconfigDeclarationDir: true,
+    }),
     resolve({
       jsnext: true,
       browser: true,

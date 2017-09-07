@@ -1,4 +1,90 @@
-import { Types, Actions, FetchOptions } from '../index'
+import { Types } from './types'
+import { Actions } from './actions'
+
+export interface Filters {
+  [filter: string]: number | Filters
+}
+
+export interface Sorts {
+  [field: string]: boolean | Sorts
+}
+
+export interface Pagination {
+  // Skip a number of results from the beginning of the query.
+  skip: number
+
+  // Limit the query to return only a number of results.
+  limit: number
+}
+
+export interface FetchOptions {
+  filter?: Filters
+  sort?: Sorts
+  page?: Pagination
+}
+
+export interface ActionPayload {
+  id?: string
+  params?: any
+  message?: string
+  filters?: any
+  sorts?: any
+  values?: any
+  variables?: any
+
+  // GraphQL fields you wish to use in your application.
+  fields?: any
+}
+
+export interface Entities<Model> {
+  [modelName: string]: {
+    [id: string]: Model
+  }
+}
+
+export interface Action {
+  type: string
+  payload: ActionPayload
+}
+
+export interface Actions<Model> {
+  get: (id: string, fields: string) => {
+    type: string
+    payload: {
+      id: string
+      fields: string
+    }
+  }
+  fetch: (fields: string, options?: FetchOptions) => {
+    type: string
+    payload: {
+      fields: string
+      variables: any
+    }
+  }
+  create: (values: Model, fields: string) => {
+    type: string
+    payload: {
+      values: Model,
+      fields: string
+    }
+  }
+  update: (id: string, values: any, fields: string) => {
+    type: string
+    payload: {
+      id: string
+      values: any
+      fields: string
+    }
+  }
+  archive: (id: string, fields: string) => {
+    type: string
+    payload: {
+      id: string
+      fields: string
+    }
+  }
+}
 
 /**
  * Generates an object of Redux action creators for utilization in generic

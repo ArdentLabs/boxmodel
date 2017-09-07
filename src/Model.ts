@@ -1,7 +1,14 @@
 import * as normalizr from 'normalizr'
-import { ModelComponents } from '../index'
 
-class Model extends normalizr.schema.Entity {
+export interface ModelComponents {
+  Table: any
+  Create: any
+  Reorder: any
+  Edit: any
+  Detail: any
+}
+
+export class Model extends normalizr.schema.Entity {
   public components: ModelComponents
 
   constructor(key: string, definition?: normalizr.Schema, options?: normalizr.schema.EntityOptions) {

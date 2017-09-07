@@ -1,10 +1,12 @@
-import { all, call, put, select, takeLatest } from 'redux-saga/effects'
+import { all, call, put, select, takeLatest, AllEffect } from 'redux-saga/effects'
 import * as normalizr from 'normalizr'
 import * as pluralize from 'pluralize'
 
-import { goBack } from './actions'
-import { getMergeType } from './types'
-import { Action, ModelSchema, Selectors, Types } from '../index'
+import { Action, goBack } from './actions'
+import { ModelAction } from './reducer'
+import { Types, getMergeType } from './types'
+import { Model } from './Model'
+import { Selectors } from './selectors'
 
 const normalize = normalizr.normalize
 
@@ -14,15 +16,22 @@ interface Entities {
   }
 }
 
-function* distributeEntities(entities: Entities) {
+export type Saga = (action: ModelAction<any>) => IterableIterator<AllEffect>
+
+function distributeEntities(entities: Entities) {
   const keys = Object.keys(entities)
+  const result = []
 
   for (const key of keys) {
-    yield put({
-      type: getMergeType(key),
-      payload: { entities: entities[key] },
-    })
+    result.push(
+      put({
+        type: getMergeType(key),
+        payload: { entities: entities[key] },
+      })
+    )
   }
+
+  return result
 }
 
 const pathnameSelector = (state: any) =>
@@ -30,7 +39,7 @@ const pathnameSelector = (state: any) =>
 
 const formatError = (err: any) => err.message || err.toString() || 'Unknown error'
 
-type Diff = (original: any, updated: any) => any
+export type Diff = (original: any, updated: any) => any
 
 export const diff: Diff = (original, updated) => {
   if (typeof original === 'object' && typeof updated === 'object') {
@@ -49,7 +58,9 @@ export const diff: Diff = (original, updated) => {
   }
 }
 
-export function generateSaga(schema: ModelSchema, types: Types, selectors: Selectors<any>, apiUrl: string) {
+export type RootSaga = () => IterableIterator<AllEffect>
+
+export function generateSaga(schema: Model, types: Types, selectors: Selectors, apiUrl: string): RootSaga {
   const name = schema.key
   const pluralName = pluralize.plural(name)
 

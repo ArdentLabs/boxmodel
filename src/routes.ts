@@ -1,4 +1,15 @@
-import { ModelComponents, Box, Route } from '../index'
+import { Box } from './box'
+import { ModelComponents } from './Model'
+
+export interface RouteProps {
+  box: Box<any>,
+}
+
+export interface Route {
+  path: string,
+  component: any,
+  props: RouteProps,
+}
 
 export function generateRoutes(modelName: string, components: ModelComponents, box: Box<any>) {
   const { Create, Reorder, Edit, Detail, Table } = components

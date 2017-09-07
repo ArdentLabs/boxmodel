@@ -1,23 +1,31 @@
-import { PathGenerator, Paths } from '../index'
+export type PathGenerator = (id: string) => string
 
-type PathFactory = (getPath: PathGenerator, absolute?: boolean) => PathGenerator
+export interface Paths {
+  create: PathGenerator  // Path to create a new model.
+  edit: PathGenerator    // Path to edit an existing model.
+  fetch: PathGenerator   // Path to view a list of existing models.
+  get: PathGenerator     // Path to view an existing model.
+  reorder: PathGenerator // Path to reorder existing models
+}
 
-const createPathFactory: PathFactory = (getPath, absolute) => (id) => {
-  let path = getPath(id)
+function createPathFactory(getPath: PathGenerator, absolute?: boolean) {
+  return (id: string) => {
+    let path = getPath(id)
 
-  if (absolute && !path.startsWith('/')) {
-    path = `/${path}`
+    if (absolute && !path.startsWith('/')) {
+      path = `/${path}`
+    }
+    else if (!absolute && path.startsWith('/')) {
+      path = path.substring(1)
+    }
+
+    // End in slash to allow more consistent and predictable behaviour
+    if (!path.endsWith('/')) {
+      path = `${path}/`
+    }
+
+    return path
   }
-  else if (!absolute && path.startsWith('/')) {
-    path = path.substring(1)
-  }
-
-  // End in slash to allow more consistent and predictable behaviour
-  if (!path.endsWith('/')) {
-    path = `${path}/`
-  }
-
-  return path
 }
 
 /**
@@ -25,9 +33,9 @@ const createPathFactory: PathFactory = (getPath, absolute) => (id) => {
  */
 export function generatePaths(modelName: string): Paths {
   const create = createPathFactory(() => `add-${modelName}`)
-  const edit = createPathFactory((id) => `${modelName}/${id}/edit`, true)
+  const edit = createPathFactory((id: string) => `${modelName}/${id}/edit`, true)
   const fetch = createPathFactory(() => `${modelName}`, true)
-  const get = createPathFactory((id) => `${modelName}/${id}`, true)
+  const get = createPathFactory((id: string) => `${modelName}/${id}`, true)
   const reorder = createPathFactory(() => `reorder-${modelName}`)
 
   return {

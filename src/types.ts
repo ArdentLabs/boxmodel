@@ -1,4 +1,19 @@
-import { ActionMap, Types } from '../index'
+import { Types } from './types'
+
+export interface ActionMap {
+  request: string
+  ok: string
+  fail: string
+}
+
+export interface Types {
+  get: ActionMap
+  fetch: ActionMap
+  create: ActionMap
+  update: ActionMap
+  archive: ActionMap
+  merge: string
+}
 
 export const namespace = '@@boxmodel'
 

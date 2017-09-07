@@ -1,12 +1,50 @@
 import { createSelector } from 'reselect'
-import { ModelsSelector, ModelState, ModelsState, JoinWith, Props, TransformFunc, Selectors, Box } from '../index'
 import { sort } from 'sift-sort'
+import { match } from 'react-router'
+
+import { Box } from './box'
+import { ModelsSelector, ModelsState } from './BoxModel'
+import { Filters } from './actions'
+import { ModelState } from './reducer'
+
+export type SortFunc<Model> = (a: Model, b: Model, state: any) => boolean
+
+export interface JoinWith {
+  [modelName: string]: boolean | string | JoinWith | Box<any>
+}
+
+export interface Params {
+  id?: string
+  parentId?: string
+  parentModel?: string
+}
+
+export interface Props<Model> {
+  id?: string
+  match: match<Params>
+  model?: Model
+  joinWith?: JoinWith
+  transform?: TransformFunc<Model> | TransformFunc<Model>[]
+  filters?: Filters,
+  sortBy: SortFunc<Model>,
+}
+
+export type TransformFunc<Model> = (model: Model) => any
+
+export interface Selectors {
+  id: any
+  loading: any
+  error: any
+  model: any
+  models: any
+  filters: any
+}
 
 /**
  * Generates functions for selecting certain portions of the Redux state for a
  * model type.
  */
-export function generateSelectors<Model>(modelName: string, modelsSelector: ModelsSelector): Selectors<Model> {
+export function generateSelectors<Model>(modelName: string, modelsSelector: ModelsSelector): Selectors {
   /**
    * Get the identifier of the requested model
    */
@@ -92,8 +130,8 @@ export function generateSelectors<Model>(modelName: string, modelsSelector: Mode
     getResult,
     getEntities,
     (result, entities) => result
-      .map((id) => entities[id])
-      .filter((obj) => !obj.archivedOn)
+      .map((id: any) => entities[id])
+      .filter((obj: any) => !obj.archivedOn)
     // TODO (Sam): Add option for viewing archived models.
   )
 
@@ -105,7 +143,7 @@ export function generateSelectors<Model>(modelName: string, modelsSelector: Mode
     getJoinWith,
     modelsSelector,
     (models, joinWith, state) =>
-      models.map((model) =>
+      models.map((model: any) =>
         join<Model>(model, joinWith, state)
       )
   )
@@ -123,7 +161,7 @@ export function generateSelectors<Model>(modelName: string, modelsSelector: Mode
     getTransformations,
     (models, transformations) => {
       if (transformations.length) {
-        return models.map((model) =>
+        return models.map((model: any) =>
           transformations.reduce((prev, curr: TransformFunc<Model>) => curr(prev), model)
         )
       }
@@ -160,7 +198,7 @@ export function generateSelectors<Model>(modelName: string, modelsSelector: Mode
     getTransformedModels,
     getFilters,
     (models, filters) =>
-      models.filter((model) => {
+      models.filter((model: any) => {
         for (const filter of filters) {
           if (!filter(model, models)) {
             return false
