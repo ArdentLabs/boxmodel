@@ -48,7 +48,7 @@ export function generateReducer<Model>(types: Types): ModelReducer<Model> {
       case types.merge:
         return {
           ...state,
-          result: payload.result as ReadonlyArray<string>,
+          result: (payload.result as ReadonlyArray<string>) || state.result,
           entities: mergeEntities(state.entities, payload.entities as Entities<Model>),
         }
 
