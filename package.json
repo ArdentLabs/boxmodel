@@ -2,14 +2,14 @@
   "name": "boxmodel",
   "version": "3.0.3",
   "description": "API to abstract models, generating common functionality",
-  "main": "dist/boxmodel.umd.js",
+  "main": "dist/boxmodel.js",
   "module": "dist/boxmodel.es5.js",
   "browser": "dist/boxmodel.iife.js",
   "typings": "dist/types/index.d.ts",
   "files": [
-    "dist",
-    "index.d.ts"
+    "dist"
   ],
+  "author": "Sam Balana <sam.balana@ardentacademy.com>",
   "repository": {
     "type": "git",
     "url": "https://github.com/ArdentLabs/gradebook-api"
@@ -26,7 +26,6 @@
     "prepublish": "npm run build",
     "test": "mocha -r ts-node/register src/**/*.spec.ts"
   },
-  "author": "Sam Balana <sam.balana@ardentacademy.com>",
   "license": "ISC",
   "dependencies": {
     "babel-runtime": "^6.26.0",
