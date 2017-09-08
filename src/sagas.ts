@@ -60,7 +60,7 @@ export const diff: Diff = (original, updated) => {
 
 export type RootSaga = () => IterableIterator<AllEffect>
 
-export function generateSaga(schema: Model, types: Types, selectors: Selectors, apiUrl: string): RootSaga {
+export function generateSaga(schema: Model, types: Types, _: Selectors, apiUrl: string): RootSaga {
   const name = schema.key
   const pluralName = pluralize.plural(name)
 
