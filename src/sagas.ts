@@ -265,8 +265,12 @@ export function generateSaga(schema: Model, types: Types, selectors: Selectors, 
         }
       `
 
-      const currentValues = yield select((state) => selectors.model(state, { id }))
-      const res = yield call(callApi, updateQuery, { input: { id, ...diff(currentValues, values) } })
+      // TODO (Sam): Find better diffing that also handles foreign keys
+      //             e.g. course -> courseId
+      // const currentValues = yield select((state) => selectors.model(state, { id }))
+      // const res = yield call(callApi, updateQuery, { input: { id, ...diff(currentValues, values) } })
+
+      const res = yield call(callApi, updateQuery, { input: { id, ...values } })
       const { entities, result } = normalize(res.data[`update${title}`], schema)
 
       yield* distributeEntities(entities)
