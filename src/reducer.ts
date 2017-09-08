@@ -48,7 +48,6 @@ export function generateReducer<Model>(types: Types): ModelReducer<Model> {
       case types.merge:
         return {
           ...state,
-          result: (payload.result as ReadonlyArray<string>) || state.result,
           entities: mergeEntities(state.entities, payload.entities as Entities<Model>),
         }
 
@@ -71,8 +70,6 @@ export function generateReducer<Model>(types: Types): ModelReducer<Model> {
         }
 
       case types.get.ok:
-      case types.create.ok:
-      case types.update.ok:
         return {
           ...state,
           result: [payload.result] as ReadonlyArray<string>,
@@ -80,13 +77,28 @@ export function generateReducer<Model>(types: Types): ModelReducer<Model> {
           error: '',
         }
 
-      case types.archive.ok:
+      case types.create.ok:
+        return {
+          ...state,
+          result: [
+            payload.result,
+            ...state.result,
+          ] as ReadonlyArray<string>,
+          loading: false,
+          error: '',
+        }
+
+      case types.update.ok:
+        return {
+          ...state,
+          loading: false,
+          error: '',
+        }
+
+      case types.archive.ok: {
         const {
-          entities: {
-            [payload.id as string]: _,
-            ...entities
-          },
-          ...rest
+          entities: { [payload.id as string]: _, ...entities },
+          ...rest,
         } = state
 
         return {
@@ -95,6 +107,7 @@ export function generateReducer<Model>(types: Types): ModelReducer<Model> {
           loading: false,
           error: '',
         }
+      }
 
       case types.get.fail:
       case types.fetch.fail:
