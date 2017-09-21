@@ -2,9 +2,9 @@
   "name": "boxmodel",
   "version": "3.0.7",
   "description": "API to abstract models, generating common functionality",
-  "main": "dist/boxmodel.js",
+  "main": "dist/boxmodel.min.js",
   "module": "dist/boxmodel.es5.js",
-  "browser": "dist/boxmodel.iife.js",
+  "browser": "dist/boxmodel.iife.min.js",
   "typings": "dist/types/index.d.ts",
   "files": [
     "dist"
