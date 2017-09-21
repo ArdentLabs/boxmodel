@@ -1,6 +1,6 @@
 {
   "name": "boxmodel",
-  "version": "3.0.7",
+  "version": "3.0.8",
   "description": "API to abstract models, generating common functionality",
   "main": "dist/boxmodel.min.js",
   "module": "dist/boxmodel.es5.js",
