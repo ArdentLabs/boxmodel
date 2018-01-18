@@ -69,7 +69,7 @@ export class BoxModel {
 
     options.schemas.map(this.generate)
 
-    this.reducer = combineReducers(this.reducers)
+    this.reducer = combineReducers(this.reducers as any)
   }
 
   public withBox(schema: Model) {

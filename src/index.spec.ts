@@ -58,7 +58,7 @@ describe('boxmodel', () => {
 
     const store = createStore(combineReducers({
       boxes: boxmodel.reducer
-    }), {})
+    } as any), {})
 
     assert.deepEqual(store.getState(), {
       boxes: {

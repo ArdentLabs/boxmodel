@@ -153,7 +153,9 @@ export function generateSelectors<Model>(modelName: string, modelsSelector: Mode
    */
   const getTransformations = (_: ModelState<Model>, props: Props<Model>) => {
     const { transform } = props
-    return transform ? [transform] : []
+    return transform
+      ? Array.isArray(transform) ? transform : [transform]
+      : []
   }
 
   const getTransformedModels = createSelector(
