@@ -62,5 +62,4 @@ typings/
 .yarn-integrity
 
 # IDE specific files
-/.idea
 /.vscode
