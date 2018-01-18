@@ -325,7 +325,7 @@ function join<Model>(model: any, joinWith: JoinWith | undefined, state: ModelsSt
               result[key] = state[box.modelName].entities[submodel]
             } else {
               // Nested object recursion
-              result[key] = join<Model>(submodel, value as JoinWith, state)
+              result[key] = join<Model>(state[key].entities[submodel], value as JoinWith, state)
             }
             break
           case 'string':
