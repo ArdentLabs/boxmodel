@@ -16,13 +16,13 @@
   },
   "scripts": {
     "clean": "rimraf dist",
-    "build": "npm run clean && mkdirp dist && npm-run-all --parallel build:development build:production",
+    "build": "npm run clean && mkdir -p dist && npm-run-all --parallel build:development build:production",
     "build:development": "NODE_ENV=development rollup -c",
     "build:production": "NODE_ENV=production rollup -c",
     "lint": "tslint -c tslint.json -p tsconfig.json",
     "lint-fix": "tslint -c tslint.json -p tsconfig.json --fix",
     "test": "mocha -r ts-node/register src/**/*.spec.ts",
-    "start": "mocha -w --watch-extensions ts -r ts-node/register src/**/*.spec.ts",
+    "start": "TS_NODE_COMPILER_OPTIONS='{\"moduleResolution\": \"node\",\"target\": \"es5\",\"module\": \"commonjs\",\"lib\": [\"es2015\",\"es2016\",\"es2017\",\"dom\"]}' mocha -w --watch-extensions ts -r ts-node/register src/**/*.spec.ts",
     "release": "standard-version",
     "prepublish": "npm run build"
   },
