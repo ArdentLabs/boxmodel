@@ -32,12 +32,13 @@ export interface Props<Model> {
 export type TransformFunc<Model> = (model: Model) => any
 
 export interface Selectors {
-  id: any
-  loading: any
-  error: any
-  model: any
-  models: any
-  filters: any
+  id: any;
+  loading: any;
+  error: any;
+  model: any;
+  models: any;
+  all: any;
+  filters: any;
 }
 
 /**
@@ -149,6 +150,28 @@ export function generateSelectors<Model>(modelName: string, modelsSelector: Mode
   )
 
   /**
+   * Get an array of all the models currently in store.
+   */
+  const getAll = createSelector(
+    getEntities,
+    entities => Object.values(entities)
+      .filter((obj: any) => !obj.archivedOn)
+  )
+
+  /**
+   * Get an array of all the models currently in store with joined sub-models.
+   */
+  const getJoinedAll = createSelector(
+    getAll,
+    getJoinWith,
+    modelsSelector,
+    (models, joinWith, state) =>
+      models.map((model: any) =>
+        join<Model>(model, joinWith, state)
+      )
+  )
+
+  /**
    * Get any desired mutation functions (props.mutate)
    */
   const getTransformations = (_: ModelState<Model>, props: Props<Model>) => {
@@ -245,6 +268,7 @@ export function generateSelectors<Model>(modelName: string, modelsSelector: Mode
     error: getError,
     model: getJoinedModel,
     models: getSortedModels,
+    all: getJoinedAll,
     filters: getFilters,
   }
 }
