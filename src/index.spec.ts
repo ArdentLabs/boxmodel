@@ -70,18 +70,24 @@ describe('boxmodel', () => {
     boxes: boxmodel.reducer
   } as any), {})
 
-  it('should initialize', () => {
+  it('should initialize state', () => {
     assert.deepEqual(store.getState(), {
       boxes: {
         parent: {
           result: [],
           entities: {},
+          sort: {},
+          filter: {},
+          page: {},
           loading: false,
           error: ''
         },
         child: {
           result: [],
           entities: {},
+          sort: {},
+          filter: {},
+          page: {},
           loading: false,
           error: ''
         }

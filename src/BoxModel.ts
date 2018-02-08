@@ -1,6 +1,8 @@
 import * as React from 'react'
 import { combineReducers } from 'redux'
 import { Selector } from 'reselect'
+import { persistReducer } from 'redux-persist'
+import storage from 'redux-persist/lib/storage'
 
 import { generateActions } from './actions'
 import { generatePaths } from './paths'
@@ -101,7 +103,11 @@ export class BoxModel {
     }
 
     this.boxes[key] = box
-    this.reducers[key] = generateReducer(types)
+    this.reducers[key] = persistReducer({
+      key: `boxmodel-${key}`,
+      storage,
+      whitelist: ['sort', 'filter', 'page']
+    }, generateReducer(types) as any)
     this.sagas.push(generateSaga(schema, types, selectors, this.options.apiUrl))
     this.routes.push(...generateRoutes(key, components, box))
   }

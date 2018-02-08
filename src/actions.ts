@@ -1,20 +1,33 @@
 import { Types } from './types'
 import { Actions } from './actions'
 
-export interface Filters {
-  [filter: string]: number | Filters
+export interface Sorts {
+  [fieldName: string]: number | Sorts
 }
 
-export interface Sorts {
-  [field: string]: boolean | Sorts
+export type FieldValue = number | string
+
+// Terminus of a nested filter
+export interface FieldFilter {
+  $eq?: FieldValue
+  $gt?: FieldValue
+  $gte?: FieldValue
+  $lt?: FieldValue
+  $lte?: FieldValue
+  $gtDate?: Date
+  $gteDate?: Date
+  $ltDate?: Date
+  $lteDate?: Date
+}
+
+export interface Filters {
+  [fieldName: string]: FieldValue | FieldFilter | Filters
 }
 
 export interface Pagination {
-  // Skip a number of results from the beginning of the query.
-  skip: number
-
-  // Limit the query to return only a number of results.
-  limit: number
+  skip?: number
+  limit?: number
+  after?: string
 }
 
 export interface FetchOptions {
@@ -84,6 +97,18 @@ export interface Actions<Model> {
       fields: string
     }
   }
+  setSort: (sort: Sorts) => {
+    type: string
+    payload: Sorts
+  }
+  setFilter: (filter: Filters) => {
+    type: string
+    payload: Filters
+  }
+  setPage: (page: Pagination) => {
+    type: string,
+    payload: Pagination
+  }
 }
 
 /**
@@ -122,7 +147,22 @@ export function generateActions<Model>(types: Types): Actions<Model> {
     payload: { id, fields },
   })
 
-  return { get, fetch, create, update, archive }
+  const setSort = (sort: Sorts) => ({
+    type: types.setSort,
+    payload: sort
+  })
+
+  const setFilter = (filter: Filters) => ({
+    type: types.setFilter,
+    payload: filter
+  })
+
+  const setPage = (page: Pagination) => ({
+    type: types.setPage,
+    payload: page
+  })
+
+  return { get, fetch, create, update, archive, setSort, setFilter, setPage }
 }
 
 /**

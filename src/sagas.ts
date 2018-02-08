@@ -4,7 +4,7 @@ import * as pluralize from 'pluralize'
 
 import { Action, goBack } from './actions'
 import { ModelAction } from './reducer'
-import { Types, getMergeType } from './types'
+import { Types, createMergeType } from './types'
 import { Model } from './Model'
 import { Selectors } from './selectors'
 
@@ -25,7 +25,7 @@ function distributeEntities(entities: Entities) {
   for (const key of keys) {
     result.push(
       put({
-        type: getMergeType(key),
+        type: createMergeType(key),
         payload: { entities: entities[key] },
       })
     )
@@ -136,6 +136,20 @@ export function generateSaga(schema: Model, types: Types, _: Selectors, apiUrl: 
     }
   }
 
+  // Doesn't work; TS must target es6 or higher for this function to work properly.
+  // function* getQueryArgument<T>(argument: T | void, defaultSelector: (state: any) => T, setActionType: string) {
+  //   if (argument) {
+  //     yield put({
+  //       type: setActionType,
+  //       payload: argument
+  //     })
+  //     return argument
+  //   }
+  //   else {
+  //     return yield select(defaultSelector)
+  //   }
+  // }
+
   function* fetchModel(action: Action) {
     try {
       const { variables, fields } = action.payload
@@ -144,9 +158,10 @@ export function generateSaga(schema: Model, types: Types, _: Selectors, apiUrl: 
         throw new Error(`Fields required for reading several ${title}`)
       }
 
-      const sort = variables.sort || {}
-      const filter = variables.filter || {}
-      const page = variables.page || {}
+      // const sort = yield* getQueryArgument(variables.sort, state => selector.root(state).sort, types.setSort)
+      const sort = variables.sort || {} // (yield select(state => selectors.root(state).sort))
+      const filter = variables.filter || {} // (yield select(state => selectors.root(state).filter))
+      const page = variables.page || {} // (yield select(state => selectors.root(state).page))
 
       const pathname = yield select(pathnameSelector)
       const tokens = pathname.split('/')

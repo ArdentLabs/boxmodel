@@ -1,5 +1,3 @@
-import { Types } from './types'
-
 export interface ActionMap {
   request: string
   ok: string
@@ -12,6 +10,9 @@ export interface Types {
   create: ActionMap
   update: ActionMap
   archive: ActionMap
+  setSort: string
+  setFilter: string
+  setPage: string
   merge: string
 }
 
@@ -26,9 +27,19 @@ const createActionFactory = (modelName: string) => (operation: string): ActionMa
   }
 }
 
-export function getMergeType(modelName: string) {
+export function createMergeType(modelName: string) {
   const prefix = modelName.toUpperCase()
   return `${namespace}/${prefix}_MERGE`
+}
+
+export function createCustomTypes(modelName: string) {
+  const prefix = modelName.toUpperCase()
+
+  return {
+    setSort: `${namespace}/${prefix}_SET_SORT`,
+    setFilter:`${namespace}/${prefix}_SET_FILTER`,
+    setPage: `${namespace}/${prefix}_SET_PAGE`,
+  }
 }
 
 export function generateTypes(modelName: string): Types {
@@ -39,7 +50,7 @@ export function generateTypes(modelName: string): Types {
   const create = factory('CREATE')
   const update = factory('UPDATE')
   const archive = factory('ARCHIVE')
-  const merge = getMergeType(modelName)
+  const merge = createMergeType(modelName)
 
-  return { get, fetch, create, update, archive, merge }
+  return { get, fetch, create, update, archive, merge, ...createCustomTypes(modelName) }
 }

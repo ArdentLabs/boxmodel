@@ -1,9 +1,12 @@
-import { Action, Entities } from './actions'
+import { Action, Entities, Sorts, Filters, Pagination } from './actions'
 import { Types } from './types'
 
 export interface ModelState<Model> {
   result: ReadonlyArray<string>
   entities: Entities<Model>
+  sort: Sorts
+  filter: Filters
+  page: Pagination
   loading: boolean
   error: string
 }
@@ -37,18 +40,39 @@ export function generateReducer<Model>(types: Types): ModelReducer<Model> {
   const initialState: ModelState<Model> = {
     result: [],
     entities: {},
+    sort: {},
+    filter: {},
+    page: {},
     loading: false,
     error: '',
   }
 
-  return (state: ModelState<Model> = initialState, action: ModelAction<Model>) => {
+  return (state: ModelState<Model> = initialState, action: ModelAction<Model>): ModelState<Model> => {
     const { type, payload } = action
 
     switch (type) {
       case types.merge:
         return {
           ...state,
-          entities: mergeEntities(state.entities, payload.entities as Entities<Model>),
+          entities: mergeEntities(state.entities, payload.entities),
+        }
+
+      case types.setSort:
+        return {
+          ...state,
+          sort: payload as any
+        }
+
+      case types.setFilter:
+        return {
+          ...state,
+          filter: payload as any
+        }
+
+      case types.setPage:
+        return {
+          ...state,
+          page: payload as any
         }
 
       case types.get.request:

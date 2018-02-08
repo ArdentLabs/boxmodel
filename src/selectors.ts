@@ -32,13 +32,14 @@ export interface Props<Model> {
 export type TransformFunc<Model> = (model: Model) => any
 
 export interface Selectors {
-  id: any;
-  loading: any;
-  error: any;
-  model: any;
-  models: any;
-  all: any;
-  filters: any;
+  root: any
+  id: any
+  loading: any
+  error: any
+  model: any
+  models: any
+  all: any
+  filters: any
 }
 
 /**
@@ -263,6 +264,7 @@ export function generateSelectors<Model>(modelName: string, modelsSelector: Mode
   )
 
   return {
+    root: getState,
     id: getId,
     loading: getLoading,
     error: getError,
