@@ -1,11 +1,11 @@
 import * as normalizr from 'normalizr'
 
 export interface ModelComponents {
-  Table: any
-  Create: any
-  Reorder: any
-  Edit: any
-  Detail: any
+  Table?: any
+  Create?: any
+  Reorder?: any
+  Edit?: any
+  Detail?: any
 }
 
 export class Model extends normalizr.schema.Entity {

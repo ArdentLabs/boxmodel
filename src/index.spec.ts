@@ -17,13 +17,13 @@ describe('diffing algorithm', () => {
         deletion: 'ignored'
       }
     }, {
-      foo: 'unchanged',
-      bar: 'updated',
-      deep: {
-        update: 'works',
-        add: 'ignored'
-      }
-    })
+        foo: 'unchanged',
+        bar: 'updated',
+        deep: {
+          update: 'works',
+          add: 'ignored'
+        }
+      })
 
     assert.deepEqual(difference, {
       bar: 'updated',
@@ -46,20 +46,31 @@ describe('boxmodel', () => {
     parent: Parent
   })
 
+  Parent.mount({
+    Create: true,
+    Edit: true,
+    Detail: true,
+    Table: true
+  })
+
+  Child.mount({
+    Table: true
+  })
+
+  const boxmodel = new BoxModel({
+    apiUrl: '',
+    selector: (state) => state.boxes,
+    schemas: [
+      Parent,
+      Child
+    ]
+  })
+
+  const store = createStore(combineReducers({
+    boxes: boxmodel.reducer
+  } as any), {})
+
   it('should initialize', () => {
-    const boxmodel = new BoxModel({
-      apiUrl: '',
-      selector: (state) => state.boxes,
-      schemas: [
-        Parent,
-        Child
-      ]
-    })
-
-    const store = createStore(combineReducers({
-      boxes: boxmodel.reducer
-    } as any), {})
-
     assert.deepEqual(store.getState(), {
       boxes: {
         parent: {
@@ -76,13 +87,12 @@ describe('boxmodel', () => {
         }
       }
     })
+  })
 
-    it('should provide routes', () => {
-      /*
-      for (const route of boxmodel.routes) {
-        // TODO more testing
-      }
-      */
-    })
+  it('should provide routes', () => {
+    assert.deepEqual(boxmodel.routes.map(route => route.path), [
+      '/:parentModel/:parentId/add-parent', '/parent/:id/edit', '/parent/:id', '/add-parent', '/parent',
+      '/child'
+    ])
   })
 })
