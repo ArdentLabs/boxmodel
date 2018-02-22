@@ -1,2 +1,3 @@
-export { Model } from './Model'
-export { BoxModel } from './BoxModel'
+import introspection from './introspection'
+
+console.log(introspection)

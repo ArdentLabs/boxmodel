@@ -34,7 +34,6 @@ export default {
     commonjs({
       include: "node_modules/**",
       namedExports: {
-        'node_modules/react/react.js': ['cloneElement'],
         'node_modules/pluralize/pluralize.js': ['plural'],
       },
     }),

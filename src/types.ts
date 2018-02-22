@@ -1,56 +1,43 @@
+import { toCapitalCase } from './utils'
+
 export interface ActionMap {
   request: string
   ok: string
   fail: string
 }
 
-export interface Types {
+export interface ActionTypes {
+  create: ActionMap
   get: ActionMap
   fetch: ActionMap
-  create: ActionMap
   update: ActionMap
   archive: ActionMap
+  merge: string
   setSort: string
   setFilter: string
   setPage: string
-  merge: string
 }
 
-export const namespace = '@@boxmodel'
-
-const createActionFactory = (modelName: string) => (operation: string): ActionMap => {
-  const prefix = modelName.toUpperCase()
-  return {
+export const createTypes = (
+  namespace: string,
+  modelName: string
+): ActionTypes => {
+  const prefix = toCapitalCase(modelName)
+  const createActionMap = (operation: string): ActionMap => ({
     request: `${namespace}/${prefix}_${operation}`,
     ok: `${namespace}/${prefix}_${operation}_OK`,
     fail: `${namespace}/${prefix}_${operation}_FAIL`,
-  }
-}
-
-export function createMergeType(modelName: string) {
-  const prefix = modelName.toUpperCase()
-  return `${namespace}/${prefix}_MERGE`
-}
-
-export function createCustomTypes(modelName: string) {
-  const prefix = modelName.toUpperCase()
+  })
 
   return {
+    create: createActionMap('CREATE'),
+    get: createActionMap('GET'),
+    fetch: createActionMap('FETCH'),
+    update: createActionMap('UPDATE'),
+    archive: createActionMap('ARCHIVE'),
+    merge: `${namespace}/${prefix}_MERGE`,
     setSort: `${namespace}/${prefix}_SET_SORT`,
-    setFilter:`${namespace}/${prefix}_SET_FILTER`,
-    setPage: `${namespace}/${prefix}_SET_PAGE`,
+    setFilter: `${namespace}/${prefix}_SET_FILTER`,
+    setPage: `${namespace}/${prefix}_SET_PAGE`
   }
-}
-
-export function generateTypes(modelName: string): Types {
-  const factory = createActionFactory(modelName)
-
-  const get = factory('GET')
-  const fetch = factory('FETCH')
-  const create = factory('CREATE')
-  const update = factory('UPDATE')
-  const archive = factory('ARCHIVE')
-  const merge = createMergeType(modelName)
-
-  return { get, fetch, create, update, archive, merge, ...createCustomTypes(modelName) }
 }

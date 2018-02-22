@@ -1,0 +1,10 @@
+{
+  query: {
+    files: [
+      {
+        match: './**/*.js',
+        parser: ['EmbeddedQueryParser', { startTag: 'gql`', endTag: '`' }],
+      },
+    ]
+  }
+}
