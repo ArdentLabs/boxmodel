@@ -8,8 +8,8 @@ export interface ActionMap {
 
 export interface ActionTypes {
   create: ActionMap
-  get: ActionMap
-  fetch: ActionMap
+  one: ActionMap
+  all: ActionMap
   update: ActionMap
   archive: ActionMap
   merge: string
@@ -31,13 +31,13 @@ export const createTypes = (
 
   return {
     create: createActionMap('CREATE'),
-    get: createActionMap('GET'),
-    fetch: createActionMap('FETCH'),
+    one: createActionMap('GET_ONE'),
+    all: createActionMap('GET_ALL'),
     update: createActionMap('UPDATE'),
     archive: createActionMap('ARCHIVE'),
     merge: `${namespace}/${prefix}_MERGE`,
     setSort: `${namespace}/${prefix}_SET_SORT`,
     setFilter: `${namespace}/${prefix}_SET_FILTER`,
-    setPage: `${namespace}/${prefix}_SET_PAGE`
+    setPage: `${namespace}/${prefix}_SET_PAGE`,
   }
 }

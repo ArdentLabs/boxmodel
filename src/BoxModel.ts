@@ -1,17 +1,4 @@
-import introspection from './introspection'
-
-export interface GraphQLResponseData {
-  data: {
-    [queryName: string]: object
-  }
-  errors?: Array<{
-    message: string
-    locations: Array<{
-      line: number
-      column: number
-    }>
-  }>
-}
+import { GraphQLResponseData } from './typings'
 
 export interface BoxModelOptions {
   // A function that is called with a graphql query string and returns a Promise that contains the response data.

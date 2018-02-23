@@ -1,20 +1,33 @@
 export default `
-  query Introspection {
-    __type(name: "Query") {
-      fields {
+  fragment typeData on __Type {
+    fields {
+      name
+      type {
         name
-        type {
+        fields {
           name
+          type {
+            name
+            kind
+            ofType {
+              name
+              kind
+              ofType {
+                name
+              }
+            }
+          }
         }
+      }
+      args {
+        name
       }
     }
-    __schema {
-      types {
-        name
-        inputFields {
-          name
-        }
-      }
+  }
+
+  query Introspection {
+    queries: __type(name: "Query") {
+      ...typeData
     }
   }
 `.replace(/\s+/g, ' ').trim()
