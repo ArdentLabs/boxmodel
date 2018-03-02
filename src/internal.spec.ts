@@ -4,7 +4,7 @@ import fetch from 'node-fetch'
 import { combineReducers, createStore, applyMiddleware } from 'redux'
 import createSagaMiddleware from 'redux-saga'
 
-import { createInternals } from './internal'
+import { generateInternals } from './internal'
 
 describe('internals', () => {
   it('should initialize', done => {
@@ -21,48 +21,64 @@ describe('internals', () => {
         }),
       }).then(response => response.json())
 
-    const { reducer, saga } = createInternals('@@boxmodel', query, [
-      'category',
-      'subject',
-      'level',
-      'part',
-      'course',
-      'lessonPlan',
-      'problemSet',
-      'problem',
-      'question',
-      'lessonPlanFile',
-      'location',
-      'category',
-      'subject',
-      'level',
-      'part',
-      'classroom',
-      'lesson',
-      'assignment',
-      'submission',
-      'enrollment',
-      'instructor',
-      'meeting',
-      'attendee',
-      'student',
-      'employee',
-      'familyMember',
-      'familyAccount',
-      'studentAccount',
-      'employeeAccount',
-      'article',
-      'banner',
-    ])
+    const { reducer, selectors, saga } = generateInternals(
+      '@@boxmodel',
+      query,
+      state => state,
+      [
+        'category',
+        'subject',
+        'level',
+        'part',
+        'course',
+        'lessonPlan',
+        'problemSet',
+        'problem',
+        'question',
+        'lessonPlanFile',
+        'location',
+        'category',
+        'subject',
+        'level',
+        'part',
+        'classroom',
+        'lesson',
+        'assignment',
+        'submission',
+        'enrollment',
+        'instructor',
+        'meeting',
+        'attendee',
+        'student',
+        'employee',
+        'familyMember',
+        'familyAccount',
+        'studentAccount',
+        'employeeAccount',
+        'article',
+        'banner',
+      ]
+    )
 
     const sagaMiddleware = createSagaMiddleware()
     const store = createStore(reducer, applyMiddleware(sagaMiddleware))
     sagaMiddleware.run(saga)
 
-    store.subscribe(() => {
+    const unsubscribe = store.subscribe(() => {
       if (store.getState().ready) {
-        console.log(JSON.stringify(store.getState(), null, '  '))
+        // console.log(JSON.stringify(store.getState(), null, '  '))
+        // console.log(
+        //   JSON.stringify(selectors.fields(store.getState(), {modelName:'classroom'}))
+        // )
+        // console.log(
+        //   JSON.stringify(
+        //     selectors.links(store.getState(), {modelName:'classroom'}),
+        //     null,
+        //     ' '
+        //   )
+        // )
         done(store.getState().error)
+        unsubscribe()
       }
     })
     sagaMiddleware.run(saga)

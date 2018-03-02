@@ -12,13 +12,16 @@ export interface ActionTypes {
   all: ActionMap
   update: ActionMap
   archive: ActionMap
-  merge: string
+  merge: string // A `merge` actually indicates that a different query has received data related to this model.
   setSort: string
   setFilter: string
   setPage: string
 }
 
-export const createTypes = (
+export const createMergeType = (namespace: string, modelName: string) =>
+  `${namespace}/${toCapitalCase(modelName)}_MERGE`
+
+export const generateTypes = (
   namespace: string,
   modelName: string
 ): ActionTypes => {
@@ -35,7 +38,7 @@ export const createTypes = (
     all: createActionMap('GET_ALL'),
     update: createActionMap('UPDATE'),
     archive: createActionMap('ARCHIVE'),
-    merge: `${namespace}/${prefix}_MERGE`,
+    merge: createMergeType(namespace, modelName),
     setSort: `${namespace}/${prefix}_SET_SORT`,
     setFilter: `${namespace}/${prefix}_SET_FILTER`,
     setPage: `${namespace}/${prefix}_SET_PAGE`,

@@ -6,6 +6,7 @@ import { GraphQLResponseData } from './typings'
 import { ActionMap } from './types'
 import { toPascalCase } from './utils'
 import introspection from './introspection'
+import { createSelector } from 'reselect'
 
 interface InternalTypes {
   introspection: ActionMap
@@ -48,8 +49,16 @@ export interface InternalState {
   }
 }
 
+export interface InternalSelectors {
+  /** Only includes fields that are not references to other things. */
+  fields: (state: any, modelName: string) => string[]
+  /** All fields that are references to other things. */
+  links: (state: any, modelName: string) => { [modelName: string]: ModelLink }
+}
+
 export interface Internals {
   reducer: Reducer<InternalState>
+  selectors: InternalSelectors
   saga: () => SagaIterator
 }
 
@@ -57,12 +66,13 @@ export interface Internals {
  *
  * @param namespace The namespace of boxmodel actions
  * @param query The function used for querying with graphql
- * @param models A list of names of all the models that boxmodel will work with
+ * @param modelNames A list of names of all the models that boxmodel will work with
  */
-export const createInternals = (
+export const generateInternals = (
   namespace: string,
   query: (query: string, variables?: object) => Promise<GraphQLResponseData>,
-  models: string[]
+  selectInternal: (state: any) => InternalState,
+  modelNames: string[]
 ): Internals => {
   // Action types
   const prefix = 'INTERNAL'
@@ -74,8 +84,6 @@ export const createInternals = (
   const types = {
     introspection: createActionMap('INTROSPECTION'),
   }
-
-  // Actions
 
   // Sagas
   // Introspection query handler
@@ -105,7 +113,7 @@ export const createInternals = (
       )
 
       // Integrity check
-      for (let modelName of models) {
+      for (let modelName of modelNames) {
         if (!(modelName in queries)) {
           yield put({
             type: types.introspection.fail,
@@ -122,7 +130,7 @@ export const createInternals = (
       const typeMap: {
         [typeName: string]: string
       } = {}
-      for (let modelName of models) {
+      for (let modelName of modelNames) {
         typeMap[queries[modelName].type.name] = modelName
       }
 
@@ -131,7 +139,7 @@ export const createInternals = (
         [modelName: string]: Model
       } = {}
 
-      for (let modelName of models) {
+      for (let modelName of modelNames) {
         modelMap[modelName] = {
           fields: queries[modelName].type.fields.map(field => field.name),
           links: queries[modelName].type.fields.reduce(
@@ -153,7 +161,7 @@ export const createInternals = (
               if (linkedType.name in typeMap) {
                 links[field.name] = {
                   modelName: typeMap[linkedType.name],
-                  many
+                  many,
                 }
               }
 
@@ -172,7 +180,7 @@ export const createInternals = (
   }
 
   function* saga(): SagaIterator {
-    yield all([fork(queryIntrospection)])
+    yield fork(queryIntrospection)
   }
 
   // Reducer
@@ -206,9 +214,27 @@ export const createInternals = (
     }
   }
 
+  const selectModel = createSelector(
+    selectInternal,
+    (_: any, modelName: string) => modelName,
+    (internals, modelName) => internals.models[modelName]
+  )
+
+  const selectFields = createSelector(selectModel, model =>
+    model.fields.filter(field => !(field in model.links))
+  )
+
+  const selectLinks = createSelector(selectModel, model => model.links)
+
+  const selectors = {
+    fields: selectFields,
+    links: selectLinks,
+  }
+
   // Return
   return {
     reducer,
+    selectors,
     saga,
   }
 }
