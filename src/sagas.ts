@@ -272,8 +272,8 @@ export function generateSaga(schema: Model, types: Types, _: Selectors, apiUrl: 
         : Object.keys(values).join('\n')
 
       const updateQuery = `
-        mutation Update${title}($input: Update${title}Input!) {
-          update${title}(input: $input) {
+        mutation Update${title}($id: ID!, $input: Update${title}Input!) {
+          update${title}(id: $id, input: $input) {
             id
             ${fields}
           }
@@ -285,7 +285,7 @@ export function generateSaga(schema: Model, types: Types, _: Selectors, apiUrl: 
       // const currentValues = yield select((state) => selectors.model(state, { id }))
       // const res = yield call(callApi, updateQuery, { input: { id, ...diff(currentValues, values) } })
 
-      const res = yield call(callApi, updateQuery, { input: { id, ...values } })
+      const res = yield call(callApi, updateQuery, { id, input: values })
       const { entities, result } = normalize(res.data[`update${title}`], schema)
 
       yield* distributeEntities(entities)
