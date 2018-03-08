@@ -136,20 +136,6 @@ export function generateSaga(schema: Model, types: Types, _: Selectors, apiUrl: 
     }
   }
 
-  // Doesn't work; TS must target es6 or higher for this function to work properly.
-  // function* getQueryArgument<T>(argument: T | void, defaultSelector: (state: any) => T, setActionType: string) {
-  //   if (argument) {
-  //     yield put({
-  //       type: setActionType,
-  //       payload: argument
-  //     })
-  //     return argument
-  //   }
-  //   else {
-  //     return yield select(defaultSelector)
-  //   }
-  // }
-
   function* fetchModel(action: Action) {
     try {
       const { variables, fields } = action.payload
@@ -279,11 +265,6 @@ export function generateSaga(schema: Model, types: Types, _: Selectors, apiUrl: 
           }
         }
       `
-
-      // TODO (Sam): Find better diffing that also handles foreign keys
-      //             e.g. course -> courseId
-      // const currentValues = yield select((state) => selectors.model(state, { id }))
-      // const res = yield call(callApi, updateQuery, { input: { id, ...diff(currentValues, values) } })
 
       const res = yield call(callApi, updateQuery, { id, input: values })
       const { entities, result } = normalize(res.data[`update${title}`], schema)
