@@ -5,6 +5,7 @@ import { combineReducers, createStore, applyMiddleware } from 'redux'
 import createSagaMiddleware from 'redux-saga'
 
 import { generateInternals } from './internal'
+import { waitUntil } from './utils'
 
 describe('internals', () => {
   it('should initialize', done => {
@@ -64,23 +65,9 @@ describe('internals', () => {
     const store = createStore(reducer, applyMiddleware(sagaMiddleware))
     sagaMiddleware.run(saga)
 
-    const unsubscribe = store.subscribe(() => {
-      if (store.getState().ready) {
-        // console.log(JSON.stringify(store.getState(), null, '  '))
-        // console.log(
-        //   JSON.stringify(selectors.fields(store.getState(), {modelName:'classroom'}))
-        // )
-        // console.log(
-        //   JSON.stringify(
-        //     selectors.links(store.getState(), {modelName:'classroom'}),
-        //     null,
-        //     ' '
-        //   )
-        // )
-        done(store.getState().error)
-        unsubscribe()
-      }
+    waitUntil(store, selectors.ready).then(() =>{
+      console.log(JSON.stringify(store.getState(), null, '  '))
+      done(selectors.error(store.getState))
     })
-    sagaMiddleware.run(saga)
   })
 })

@@ -16,6 +16,7 @@
     "sourceMap": true,
     "declaration": true,
     "declarationDir": "dist/types",
+    "downlevelIteration": true,
     "outDir": "compiled"
   },
   "include": ["src/**/*"],

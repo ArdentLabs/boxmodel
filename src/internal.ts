@@ -50,6 +50,10 @@ export interface InternalState {
 }
 
 export interface InternalSelectors {
+  /** Selects the ready state of the internal state. */
+  ready: (state: any) => boolean
+  /** Selects the error state of the internal state. */
+  error: (state: any) => string | null
   /** Only includes fields that are not references to other things. */
   fields: (state: any, modelName: string) => string[]
   /** All fields that are references to other things. */
@@ -214,10 +218,14 @@ export const generateInternals = (
     }
   }
 
+  const selectReady = createSelector(selectInternal, internal => internal.ready)
+
+  const selectError = createSelector(selectInternal, internal => internal.error)
+
   const selectModel = createSelector(
     selectInternal,
     (_: any, modelName: string) => modelName,
-    (internals, modelName) => internals.models[modelName]
+    (internal, modelName) => internal.models[modelName]
   )
 
   const selectFields = createSelector(selectModel, model =>
@@ -227,6 +235,8 @@ export const generateInternals = (
   const selectLinks = createSelector(selectModel, model => model.links)
 
   const selectors = {
+    ready: selectReady,
+    error: selectError,
     fields: selectFields,
     links: selectLinks,
   }

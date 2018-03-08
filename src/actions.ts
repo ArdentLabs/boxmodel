@@ -51,7 +51,7 @@ export interface ActionCreators<Model> {
   ) => AnyAction & {
     payload: {
       id: string
-      join: Join,
+      join: Join
       force: boolean
     }
   }
@@ -59,7 +59,7 @@ export interface ActionCreators<Model> {
     join: Join
   ) => AnyAction & {
     payload: {
-      join: Join,
+      join: Join
       force: boolean
     }
   }
@@ -144,6 +144,10 @@ export const generateActionCreators = <Model>(
     type: types.setPage,
     payload: { page },
   })
+
+  /*
+   * Among the actions, `create`, `update`, `archive`, `setFilter`, `setSort`, and `setPage` should be called externally, while `one` and `all` should be called only internally.
+   */
 
   return {
     create,
