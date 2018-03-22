@@ -152,16 +152,26 @@ export function generateSaga(schema: Model, types: Types, _: Selectors, apiUrl: 
       const pathname = yield select(pathnameSelector)
       const tokens = pathname.split('/')
 
-      if (tokens.length === 4) {
+      if (tokens.length === 5) {
+        // URL matcehs /:parentName/:parentId/reorder-:modelName/
+        const parentName = tokens[1]
+        const parentId = tokens[2]
+        // Filter by parent
+        filter[`${parentName}Id`] = parentId
+      }
+      else if (tokens.length === 4) {
         // URL matches /:parentName/:parentId/
         const parentName = tokens[1]
         const parentId = tokens[2]
         // Filter by the parent
         filter[`${parentName}Id`] = parentId
-      } else if (tokens.length === 2) {
-        // URL matches /:modelName
-      } else {
-        throw new Error(`Unknown URL format: ${pathname}`)
+      }
+      else if (tokens.length === 2) {
+        // URL matches /:modelName/
+        // No filter
+      }
+      else {
+        throw new Error(`Unknown URL format: ${pathname} (${tokens.length} tokens)`)
       }
 
       const fetchQuery = `
