@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="3.3.0"></a>
+# [3.3.0](https://github.com/ArdentLabs/boxmodel/compare/v3.2.0...v3.3.0) (2018-03-22)
+
+
+### Bug Fixes
+
+* Fix sagas for GraphQL API v3.0 ([da90cb7](https://github.com/ArdentLabs/boxmodel/commit/da90cb7))
+
+
+### Features
+
+* Reorder compatability ([babe2c3](https://github.com/ArdentLabs/boxmodel/commit/babe2c3))
+
+
+
 <a name="3.1.0"></a>
 # [3.1.0](https://github.com/ArdentLabs/boxmodel/compare/v3.0.8...v3.1.0) (2018-03-06)
 
