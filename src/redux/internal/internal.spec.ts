@@ -4,7 +4,7 @@ import createSagaMiddleware from 'redux-saga'
 
 import reducer from './reducer'
 import saga from './saga'
-import { configure } from '../config'
+import { configure } from '../../config'
 
 before(() => {
   configure({

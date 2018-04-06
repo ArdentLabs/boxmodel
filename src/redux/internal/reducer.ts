@@ -1,23 +1,23 @@
-import { AnyAction } from 'redux';
+import { AnyAction } from 'redux'
 
-import * as types from './types'
+import types from './types'
 import { TypeMap, Queries, Mutations } from './saga'
 
-export interface State {
+export interface InternalState {
   typeMap: TypeMap
   queries: Queries
   mutations: Mutations
 }
 
-const defaultState: State = {
+const defaultState: InternalState = {
   typeMap: {},
   queries: {},
   mutations: {}
 }
 
-const reducer = (state: State = defaultState, action: AnyAction) => {
+const reducer = (state: InternalState = defaultState, action: AnyAction) => {
   const { type, payload } = action
-
+  
   switch (type) {
     case types.INTROSPECTION_INIT: {
       return {

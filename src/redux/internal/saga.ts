@@ -1,8 +1,8 @@
 import * as effects from 'redux-saga/effects'
 import { SagaIterator } from 'redux-saga'
 
-import * as utils from '../utils'
-import * as types from './types'
+import types from './types'
+import * as utils from '../../utils'
 import * as introspection from './introspection'
 
 interface GQLField {
@@ -51,56 +51,56 @@ export interface Mutations {
 /** Initializes the internal redux state by figuring out which queries/mutations are related to which types. */
 function* init(): SagaIterator {
   const { data } = yield effects.call(utils.query, introspection.INIT)
-
-  const typeMap = (data as InitData).queries.fields.reduce((types, field) => {
+  
+  const typeMap = (data as InitData).queries.fields.reduce((t, field) => {
     if (field.type.name) {
-      types[field.name] = field.type.name
+      t[field.name] = field.type.name
     }
-    return types
+    return t
   }, {} as TypeMap)
-
-  const queries = (data as InitData).queries.fields.reduce((queries, field) => {
+  
+  const queries = (data as InitData).queries.fields.reduce((q, field) => {
     if (field.type.name) {
       // To one relationship
-      queries[field.type.name] = {
-        ...queries[field.type.name],
+      q[field.type.name] = {
+        ...q[field.type.name],
         one: field.name
       }
     }
     else if (field.type.kind === 'LIST') {
       // To many relationship
-      queries[field.type.ofType.name] = {
-        ...queries[field.type.ofType.name],
+      q[field.type.ofType.name] = {
+        ...q[field.type.ofType.name],
         many: field.name
       }
     }
-    return queries
+    return q
   }, {} as Queries)
-
-  const mutations = (data as InitData).mutations.fields.reduce((mutations, field) => {
+  
+  const mutations = (data as InitData).mutations.fields.reduce((m, field) => {
     if (field.type.name) {
       if (field.name.startsWith('create')) {
-        mutations[field.type.name] = {
-          ...mutations[field.type.name],
+        m[field.type.name] = {
+          ...m[field.type.name],
           create: field.name
         }
       }
       else if (field.name.startsWith('update')) {
-        mutations[field.type.name] = {
-          ...mutations[field.type.name],
+        m[field.type.name] = {
+          ...m[field.type.name],
           update: field.name
         }
       }
       else if (field.name.startsWith('archive')) {
-        mutations[field.type.name] = {
-          ...mutations[field.type.name],
+        m[field.type.name] = {
+          ...m[field.type.name],
           archive: field.name
         }
       }
     }
-    return mutations
+    return m
   }, {} as Mutations)
-
+  
   yield effects.put({
     type: types.INTROSPECTION_INIT,
     payload: {
