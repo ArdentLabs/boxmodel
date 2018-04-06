@@ -1,10 +1,8 @@
 export interface Config {
-  fetch: (input: string | Request, init?: RequestInit) => Promise<Response>;
-  apiUrl: string;
+  apiUrl: string
 }
 
 export const config: Config = {
-  fetch,
   apiUrl: ''
 }
 

@@ -13,7 +13,7 @@ before(() => {
 })
 
 describe('internal module', () => {
-  it('can initialize introspection', done => {
+  it('can initialize introspection', (done) => {
     const sagaMiddleware = createSagaMiddleware()
     const store = createStore(reducer, applyMiddleware(sagaMiddleware))
 
