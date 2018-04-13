@@ -1,8 +1,14 @@
 import * as assert from 'assert'
 import * as randomstring from 'randomstring'
+import { createStore, applyMiddleware } from 'redux'
+import createSagaMiddleware from 'redux-saga'
 
 import types, { init } from './types'
 import actions from './actions'
+import reducer from './reducer'
+import saga from './saga'
+import selectors from './selectors'
+import { reset } from '../config'
 
 describe('redux module', () => {
   it('creates types correctly', () => {
@@ -35,7 +41,7 @@ describe('redux module', () => {
       merge: '@@boxmodel/HELLO_WORLD_MERGE'
     })
   })
-  
+
   it('creates action creators that create actions correctly', () => {
     const test = (modelName: string) => {
       const id = randomstring.generate()
@@ -115,9 +121,47 @@ describe('redux module', () => {
         }
       )
     }
-    
+
     test('helloWorld')
     test('lessonPlanFile')
     test(randomstring.generate())
+  })
+
+  it('creates selectors correctly', () => {
+    const state = {
+      boxmodel: {
+        data: {
+          course: {
+            "210f6454-da1b-4f6d-844f-75800dd2db4b": {
+              id: "210f6454-da1b-4f6d-844f-75800dd2db4b",
+              title: "Test of Types",
+              lessonPlansId: [
+                "6168d01f-36db-4410-a13a-1fa182556a94",
+                "15d7c3b4-6eb0-4b04-9722-7fb709b39212",
+                "1a14ee9d-4016-4e3c-b8f6-c0f88b968c38",
+                "6724ced6-3e41-4233-a58b-5b520f09c25b",
+                "3681b106-89e0-4a48-9a2c-50edbe510f35"
+              ]
+            },
+            _loading: Math.random() < 0.5,
+            _error: Math.random() < 0.5
+          },
+          lessonPlan: {
+            "6168d01f-36db-4410-a13a-1fa182556a94": {
+              "id": "6168d01f-36db-4410-a13a-1fa182556a94",
+              "title": "Types of Problem Sets"
+            },
+            "15d7c3b4-6eb0-4b04-9722-7fb709b39212": {
+              "id": "15d7c3b4-6eb0-4b04-9722-7fb709b39212",
+              "title": "Multiple Choices"
+            }
+          }
+        }
+      }
+    }
+
+    assert.strictEqual(selectors('course').loading(state), state.boxmodel.data.course._loading)
+    assert.strictEqual(selectors('course').error(state), state.boxmodel.data.course._error)
+    assert.deepStrictEqual(selectors('course').one(state, "210f6454-da1b-4f6d-844f-75800dd2db4b"), state.boxmodel.data.course["210f6454-da1b-4f6d-844f-75800dd2db4b"])
   })
 })

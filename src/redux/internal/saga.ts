@@ -4,8 +4,10 @@ import { SagaIterator } from 'redux-saga'
 import types from './types'
 import * as utils from '../../utils'
 import * as introspection from './introspection'
+import { AnyAction } from 'redux';
+import { selectTypeMap, selectSchemas } from './selectors';
 
-interface GQLField {
+interface GQLInitField {
   name: string
   type: {
     name: string
@@ -16,14 +18,8 @@ interface GQLField {
   }
 }
 
-interface GQLType {
-  fields: Array<GQLField>
-}
-
-/** Represents the structure of `data` returned by the introspection init query. */
-interface InitData {
-  queries: GQLType
-  mutations: GQLType
+interface GQLInitType {
+  fields: GQLInitField[]
 }
 
 // Mapping from modelName to TypeName.
@@ -48,17 +44,35 @@ export interface Mutations {
   }
 }
 
+export interface Schemas {
+  [TypeName: string]: {
+    fields: string[],
+    foreign: {
+      [fieldName: string]: {
+        type: string,
+        many: boolean
+      }
+    }
+  }
+}
+
+/** Represents the structure of `data` returned by the introspection init query. */
+interface InitData {
+  queries: GQLInitType
+  mutations: GQLInitType
+}
+
 /** Initializes the internal redux state by figuring out which queries/mutations are related to which types. */
 function* init(): SagaIterator {
   const { data } = yield effects.call(utils.query, introspection.INIT)
-  
+
   const typeMap = (data as InitData).queries.fields.reduce((t, field) => {
     if (field.type.name) {
       t[field.name] = field.type.name
     }
     return t
   }, {} as TypeMap)
-  
+
   const queries = (data as InitData).queries.fields.reduce((q, field) => {
     if (field.type.name) {
       // To one relationship
@@ -76,7 +90,7 @@ function* init(): SagaIterator {
     }
     return q
   }, {} as Queries)
-  
+
   const mutations = (data as InitData).mutations.fields.reduce((m, field) => {
     if (field.type.name) {
       if (field.name.startsWith('create')) {
@@ -100,7 +114,7 @@ function* init(): SagaIterator {
     }
     return m
   }, {} as Mutations)
-  
+
   yield effects.put({
     type: types.INTROSPECTION_INIT,
     payload: {
@@ -111,8 +125,54 @@ function* init(): SagaIterator {
   })
 }
 
+interface GQLSchemaField {
+  name: string
+  type: {
+    name: string
+    kind: string
+    ofType: {
+      name: string
+      kind: string
+      ofType: {
+        name: string
+        kind: string
+      }
+    }
+  }
+}
+
+interface GQLSchemaType {
+  fields: GQLSchemaField[]
+}
+
+function* schema(action: AnyAction): SagaIterator {
+  const { modelName } = action.payload
+  const schemas = yield effects.select(selectSchemas)
+  const typeMap = yield effects.select(selectTypeMap)
+
+  try {
+    const { data } = yield effects.call(
+      utils.query,
+      introspection.TYPE,
+      {
+        typeName: typeMap[modelName]
+      }
+    )
+
+  }
+  catch (error) {
+    yield effects.put({
+      type: types.INTROSPECTION_TYPE_FAIL,
+      payload: {
+        error
+      }
+    })
+  }
+}
+
 function* root() {
   yield* init()
+  yield effects.takeEvery(types.INTROSPECTION_TYPE, schema)
 }
 
 export default root

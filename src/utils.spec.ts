@@ -1,9 +1,8 @@
 import 'isomorphic-fetch'
 import * as assert from 'assert'
-import fetch from 'node-fetch'
 
 import * as utils from './utils'
-import { configure } from './config'
+import { config, configure, reset } from './config'
 
 before(() => {
   configure({

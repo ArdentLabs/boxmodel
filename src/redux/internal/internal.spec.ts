@@ -4,7 +4,7 @@ import createSagaMiddleware from 'redux-saga'
 
 import reducer from './reducer'
 import saga from './saga'
-import { configure } from '../../config'
+import { configure, reset } from '../../config'
 
 before(() => {
   configure({
@@ -19,7 +19,7 @@ describe('internal module', () => {
 
     const unsubscribe = store.subscribe(() => {
       if (Object.keys(store.getState().typeMap).length) {
-        console.log(JSON.stringify(store.getState(), null, ' '))
+        // console.log(JSON.stringify(store.getState(), null, ' '))
         unsubscribe()
         done()
       }

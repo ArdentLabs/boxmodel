@@ -2,7 +2,7 @@ import { createSelector, Selector } from 'reselect'
 
 import { selector } from '../../utils'
 import { InternalState } from './reducer'
-import { Mutations, Queries, TypeMap } from './saga'
+import { Mutations, Queries, TypeMap, Schemas } from './saga'
 
 export const selectInternal: Selector<any, InternalState> = createSelector(
   selector,
@@ -22,4 +22,9 @@ export const selectQueries: Selector<any, Queries> = createSelector(
 export const selectMutations: Selector<any, Mutations> = createSelector(
   selectInternal,
   (internal) => internal.mutations
+)
+
+export const selectSchemas: Selector<any, Schemas> = createSelector(
+  selectInternal,
+  (internal) => internal.schemas
 )
