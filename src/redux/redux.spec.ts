@@ -1,21 +1,28 @@
+import 'isomorphic-fetch'
 import * as assert from 'assert'
 import * as randomstring from 'randomstring'
 import { createStore, applyMiddleware, Store, combineReducers } from 'redux'
 import createSagaMiddleware from 'redux-saga'
+import * as debounce from 'lodash.debounce'
 
 import types from './types'
 import actions from './actions'
 import reducer from './reducer'
 import saga from './saga'
 import selectors from './selectors'
-import { reset } from '../config'
-import { BoxModelState } from '.';
-import { selectInternal } from './internal/selectors';
+import { BoxModelState } from '.'
+import { configure } from '../config'
+
+before(() => {
+  configure({
+    apiUrl: 'https://ardent-api-next.ardentlabs.io'
+  })
+})
 
 describe('redux module', () => {
   it('creates types correctly', () => {
     assert.deepStrictEqual(types('helloWorld'), {
-      init: '@@boxmodel/HELLO_WORLD_INIT',
+      init: '@@boxmodel/MODEL_INIT',
       one: {
         request: '@@boxmodel/HELLO_WORLD_ONE',
         ok: '@@boxmodel/HELLO_WORLD_ONE_OK',
@@ -130,33 +137,33 @@ describe('redux module', () => {
     test(randomstring.generate())
   })
 
-  it('creates selectors correctly', () => {
+  it('creates simple selectors correctly', () => {
     const state = {
       boxmodel: {
         data: {
           course: {
-            "210f6454-da1b-4f6d-844f-75800dd2db4b": {
-              id: "210f6454-da1b-4f6d-844f-75800dd2db4b",
-              title: "Test of Types",
+            '210f6454-da1b-4f6d-844f-75800dd2db4b': {
+              id: '210f6454-da1b-4f6d-844f-75800dd2db4b',
+              title: 'Test of Types',
               lessonPlansId: [
-                "6168d01f-36db-4410-a13a-1fa182556a94",
-                "15d7c3b4-6eb0-4b04-9722-7fb709b39212",
-                "1a14ee9d-4016-4e3c-b8f6-c0f88b968c38",
-                "6724ced6-3e41-4233-a58b-5b520f09c25b",
-                "3681b106-89e0-4a48-9a2c-50edbe510f35"
+                '6168d01f-36db-4410-a13a-1fa182556a94',
+                '15d7c3b4-6eb0-4b04-9722-7fb709b39212',
+                '1a14ee9d-4016-4e3c-b8f6-c0f88b968c38',
+                '6724ced6-3e41-4233-a58b-5b520f09c25b',
+                '3681b106-89e0-4a48-9a2c-50edbe510f35'
               ]
             },
-            _loading: Math.random() < 0.5,
-            _error: Math.random() < 0.5
+            '_loading': Math.random() < 0.5,
+            '_error': Math.random() < 0.5
           },
           lessonPlan: {
-            "6168d01f-36db-4410-a13a-1fa182556a94": {
-              "id": "6168d01f-36db-4410-a13a-1fa182556a94",
-              "title": "Types of Problem Sets"
+            '6168d01f-36db-4410-a13a-1fa182556a94': {
+              id: '6168d01f-36db-4410-a13a-1fa182556a94',
+              title: 'Types of Problem Sets'
             },
-            "15d7c3b4-6eb0-4b04-9722-7fb709b39212": {
-              "id": "15d7c3b4-6eb0-4b04-9722-7fb709b39212",
-              "title": "Multiple Choices"
+            '15d7c3b4-6eb0-4b04-9722-7fb709b39212': {
+              id: '15d7c3b4-6eb0-4b04-9722-7fb709b39212',
+              title: 'Multiple Choices'
             }
           }
         }
@@ -165,29 +172,55 @@ describe('redux module', () => {
 
     assert.strictEqual(selectors('course').loading(state), state.boxmodel.data.course._loading)
     assert.strictEqual(selectors('course').error(state), state.boxmodel.data.course._error)
-    assert.deepStrictEqual(selectors('course').one(state, "210f6454-da1b-4f6d-844f-75800dd2db4b"), state.boxmodel.data.course["210f6454-da1b-4f6d-844f-75800dd2db4b"])
+    assert.deepStrictEqual(
+      selectors('course').one(state, '210f6454-da1b-4f6d-844f-75800dd2db4b'),
+      state.boxmodel.data.course['210f6454-da1b-4f6d-844f-75800dd2db4b']
+    )
   })
 
   it('creates sagas correctly', (done) => {
     const sagaMiddleware = createSagaMiddleware()
 
-    const store: Store<{ boxmodel: BoxModelState }> = createStore(combineReducers({ boxmodel: reducer }), {} as any, applyMiddleware(sagaMiddleware))
+    const store: Store<{ boxmodel: BoxModelState }> = createStore(
+      combineReducers({ boxmodel: reducer }),
+      {} as any,
+      applyMiddleware(sagaMiddleware)
+    )
 
     sagaMiddleware.run(saga)
 
     const unsubscribe = store.subscribe(() => {
       if (Object.keys(store.getState().boxmodel._internal.typeMap).length) {
         unsubscribe()
-        setTimeout(() => {
-          store.dispatch(actions('course').init())
-        }, 100)
 
+        store.dispatch(actions('course').init())
+        const end = store.subscribe(debounce(() => {
+          end()
+          console.log(JSON.stringify(store.getState().boxmodel._internal.schemas, null, '  '))
+          done(store.getState().boxmodel._internal._error)
+        }, 500))
       }
     })
+  }).timeout(5000)
 
-    setTimeout(() => {
-      console.log(JSON.stringify(store.getState().boxmodel._internal.schemas, null, '  '))
-      done()
-    }, 5000)
-  }).timeout(6000)
+  it('creates advanced selectors correctly', (done) => {
+
+    const sagaMiddleware = createSagaMiddleware()
+
+    const store: Store<{ boxmodel: BoxModelState }> = createStore(
+      combineReducers({ boxmodel: reducer }),
+      {} as any,
+      applyMiddleware(sagaMiddleware)
+    )
+
+    sagaMiddleware.run(saga)
+
+    store.dispatch(actions('course').init())
+
+    const unsubscribe = store.subscribe(debounce(() => {
+      unsubscribe()
+
+      store.dispatch(actions('course').many())
+    }, 500))
+  }).timeout(5000)
 })

@@ -1,6 +1,6 @@
 import { memoize } from '../utils'
 import { AnyAction } from 'redux'
-import types from './types'
+import types, { init } from './types'
 
 export interface Join {
   [fieldName: string]: true | Join
@@ -11,7 +11,7 @@ export interface Actions {
   init: () => AnyAction
   // Data fetch actions.
   one: (id: string, join?: Join) => AnyAction
-  many: (variables: any, join?: Join) => AnyAction
+  many: (variables?: any, join?: Join) => AnyAction
   // Data mutation actions.
   create: (input: any) => AnyAction
   update: (id: string, input: any) => AnyAction
@@ -22,14 +22,14 @@ export interface Actions {
 
 const actions = (modelName: string): Actions => ({
   init: () => ({
-    type: types(modelName).init,
+    type: init(),
     payload: { modelName }
   }),
   one: (id, join = {}) => ({
     type: types(modelName).one.request,
     payload: { id, join }
   }),
-  many: (variables, join = {}) => ({
+  many: (variables = {}, join = {}) => ({
     type: types(modelName).many.request,
     payload: { variables, join }
   }),

@@ -34,6 +34,15 @@ const reducer = (state: InternalState = defaultState, action: AnyAction) => {
         ...state,
         schemas: {
           ...state.schemas,
+          [payload.modelName]: {}
+        }
+      }
+    }
+    case types.INTROSPECTION_TYPE_OK:{
+      return {
+        ...state,
+        schemas: {
+          ...state.schemas,
           ...payload
         }
       }

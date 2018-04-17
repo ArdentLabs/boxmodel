@@ -1,18 +1,29 @@
 import { createSelector } from 'reselect'
 import { selector, memoize } from '../utils'
-import { Join } from './actions';
+import { Join } from './actions'
+import { selectQueries, selectSchemas } from './internal/selectors'
 
-const resolveJoin = (state: any, entity: any, join: Join): any => {
+const resolveJoin = (state: any, modelName: string, entity: any, join: Join): any => {
   const result = { ...entity }
 
-  for (let modelName in join) {
-    if (join[modelName] && typeof join[modelName] === 'boolean') {
+
+  for (const field in join) {
+    const queries = selectQueries(state)
+    const joinModelName = queries[selectSchemas(state)[modelName].foreign[field].type].one as string
+    console.log(field, joinModelName)
+
+    if (join[field] && typeof join[field] === 'boolean') {
       // Simple join
-      result[modelName] = selectors(modelName).one(state, entity[`${modelName}Id`])
+      result[field] = selectors(joinModelName).one(state, entity[`${field}Id`])
     }
     else {
       // Nested join
-      result[modelName] = resolveJoin(state, selectors(modelName).one(state, entity[`${modelName}Id`]), join[modelName] as Join)
+      result[field] = resolveJoin(
+        state,
+        joinModelName,
+        selectors(field).one(state, entity[`${field}Id`]),
+        join[field] as Join
+      )
     }
   }
 
@@ -22,24 +33,24 @@ const resolveJoin = (state: any, entity: any, join: Join): any => {
 const selectors = (modelName: string) => {
   const root = createSelector(
     selector,
-    boxmodel => boxmodel.data[modelName]
+    (boxmodel) => boxmodel.data[modelName]
   )
 
   const loading = createSelector(
     root,
-    data => data._loading
+    (data) => data._loading
   )
 
   const error = createSelector(
     root,
-    data => data._error
+    (data) => data._error
   )
 
   const one = createSelector(
-    state => state,
+    (state) => state,
     root,
     (_: any, id: string, join: Join = {}) => ({ id, join }),
-    (state, data, { id, join }) => resolveJoin(state, data[id], join)
+    (state, data, { id, join }) => resolveJoin(state, modelName, data[id], join)
   )
 
   return {

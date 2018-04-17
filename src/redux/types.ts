@@ -41,7 +41,7 @@ const types = (modelName: string): Types => {
   }
 
   return {
-    init: `${config.namespace}/${prefix}_INIT`,
+    init: init(),
     one: createActionMap('ONE'),
     many: createActionMap('MANY'),
     create: createActionMap('CREATE'),
@@ -51,6 +51,6 @@ const types = (modelName: string): Types => {
   }
 }
 
-export const isInit = memoize((type: string): boolean => new RegExp(`${config.namespace}/[A-Z_]+_INIT`).test(type))
+export const init = () => `${config.namespace}/MODEL_INIT`
 
 export default memoize(types)

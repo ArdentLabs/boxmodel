@@ -2,9 +2,8 @@
  * The state of data for a single model.
  */
 import { AnyAction, combineReducers, ReducersMapObject } from 'redux'
-import createTypes, { init, isInit } from './types'
+import createTypes, { init } from './types'
 import * as internal from './internal'
-import { InternalState } from './internal/reducer';
 
 export interface ModelState {
   _loading: boolean
@@ -20,10 +19,8 @@ export interface DataState {
 
 const defaultState: DataState = {}
 
-const reducers: ReducersMapObject = {
-  _internal: internal.reducer
-}
-let reducer = combineReducers(reducers)
+const reducers: ReducersMapObject = {}
+let reducer = () => ({})
 
 /** Generates and adds a reducer to the reducer map. */
 const addReducer = (modelName: string) => {
@@ -87,7 +84,7 @@ const addReducer = (modelName: string) => {
 export default combineReducers({
   _internal: internal.reducer,
   data: (state: DataState = defaultState, action: AnyAction) => {
-    if (isInit(action.type)) {
+    if (action.type === init()) {
       addReducer(action.payload.modelName)
     }
 
