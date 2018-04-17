@@ -2,7 +2,7 @@
  * The state of data for a single model.
  */
 import { AnyAction, combineReducers, ReducersMapObject } from 'redux'
-import createTypes, { init } from './types'
+import createTypes, { init, isInit } from './types'
 import * as internal from './internal'
 import { InternalState } from './internal/reducer';
 
@@ -87,7 +87,7 @@ const addReducer = (modelName: string) => {
 export default combineReducers({
   _internal: internal.reducer,
   data: (state: DataState = defaultState, action: AnyAction) => {
-    if (action.type === init()) {
+    if (isInit(action.type)) {
       addReducer(action.payload.modelName)
     }
 

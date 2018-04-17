@@ -1,18 +1,21 @@
 import * as assert from 'assert'
 import * as randomstring from 'randomstring'
-import { createStore, applyMiddleware } from 'redux'
+import { createStore, applyMiddleware, Store, combineReducers } from 'redux'
 import createSagaMiddleware from 'redux-saga'
 
-import types, { init } from './types'
+import types from './types'
 import actions from './actions'
 import reducer from './reducer'
 import saga from './saga'
 import selectors from './selectors'
 import { reset } from '../config'
+import { BoxModelState } from '.';
+import { selectInternal } from './internal/selectors';
 
 describe('redux module', () => {
   it('creates types correctly', () => {
     assert.deepStrictEqual(types('helloWorld'), {
+      init: '@@boxmodel/HELLO_WORLD_INIT',
       one: {
         request: '@@boxmodel/HELLO_WORLD_ONE',
         ok: '@@boxmodel/HELLO_WORLD_ONE_OK',
@@ -116,7 +119,7 @@ describe('redux module', () => {
       assert.deepStrictEqual(
         actions(modelName).init(),
         {
-          type: init(),
+          type: types(modelName).init,
           payload: { modelName }
         }
       )
@@ -164,4 +167,27 @@ describe('redux module', () => {
     assert.strictEqual(selectors('course').error(state), state.boxmodel.data.course._error)
     assert.deepStrictEqual(selectors('course').one(state, "210f6454-da1b-4f6d-844f-75800dd2db4b"), state.boxmodel.data.course["210f6454-da1b-4f6d-844f-75800dd2db4b"])
   })
+
+  it('creates sagas correctly', (done) => {
+    const sagaMiddleware = createSagaMiddleware()
+
+    const store: Store<{ boxmodel: BoxModelState }> = createStore(combineReducers({ boxmodel: reducer }), {} as any, applyMiddleware(sagaMiddleware))
+
+    sagaMiddleware.run(saga)
+
+    const unsubscribe = store.subscribe(() => {
+      if (Object.keys(store.getState().boxmodel._internal.typeMap).length) {
+        unsubscribe()
+        setTimeout(() => {
+          store.dispatch(actions('course').init())
+        }, 100)
+
+      }
+    })
+
+    setTimeout(() => {
+      console.log(JSON.stringify(store.getState().boxmodel._internal.schemas, null, '  '))
+      done()
+    }, 5000)
+  }).timeout(6000)
 })

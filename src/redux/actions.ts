@@ -1,6 +1,6 @@
 import { memoize } from '../utils'
 import { AnyAction } from 'redux'
-import types, { init } from './types'
+import types from './types'
 
 export interface Join {
   [fieldName: string]: true | Join
@@ -22,7 +22,7 @@ export interface Actions {
 
 const actions = (modelName: string): Actions => ({
   init: () => ({
-    type: init(),
+    type: types(modelName).init,
     payload: { modelName }
   }),
   one: (id, join = {}) => ({

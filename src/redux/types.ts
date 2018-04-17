@@ -8,6 +8,7 @@ export interface ActionMap {
 }
 
 export interface Types {
+  init: string
   one: ActionMap
   many: ActionMap
   create: ActionMap
@@ -26,7 +27,7 @@ const types = (modelName: string): Types => {
           : character.toUpperCase()
     )
     .join('')
-  
+
   /**
    * Creates an action map for the given prefix and action.
    * `action` should be UPPER_CASE.
@@ -38,8 +39,9 @@ const types = (modelName: string): Types => {
       fail: `${config.namespace}/${prefix}_${action}_FAIL`
     }
   }
-  
+
   return {
+    init: `${config.namespace}/${prefix}_INIT`,
     one: createActionMap('ONE'),
     many: createActionMap('MANY'),
     create: createActionMap('CREATE'),
@@ -49,6 +51,6 @@ const types = (modelName: string): Types => {
   }
 }
 
-export const init = () => `${config.namespace}/MODEL_INIT`
+export const isInit = memoize((type: string): boolean => new RegExp(`${config.namespace}/[A-Z_]+_INIT`).test(type))
 
 export default memoize(types)

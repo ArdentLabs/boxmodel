@@ -8,13 +8,15 @@ export interface InternalState {
   queries: Queries
   mutations: Mutations
   schemas: Schemas
+  _error: boolean
 }
 
 const defaultState: InternalState = {
   typeMap: {},
   queries: {},
   mutations: {},
-  schemas: {}
+  schemas: {},
+  _error: false
 }
 
 const reducer = (state: InternalState = defaultState, action: AnyAction) => {
@@ -27,13 +29,19 @@ const reducer = (state: InternalState = defaultState, action: AnyAction) => {
         ...payload
       }
     }
-    case types.INTROSPECTION_TYPE_OK: {
+    case types.INTROSPECTION_TYPE: {
       return {
         ...state,
         schemas: {
           ...state.schemas,
           ...payload
         }
+      }
+    }
+    case types.INTROSPECTION_ERROR: {
+      return {
+        ...state,
+        _error: payload.error
       }
     }
     default: {
