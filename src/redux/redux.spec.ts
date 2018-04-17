@@ -204,7 +204,6 @@ describe('redux module', () => {
   }).timeout(5000)
 
   it('creates advanced selectors correctly', (done) => {
-
     const sagaMiddleware = createSagaMiddleware()
 
     const store: Store<{ boxmodel: BoxModelState }> = createStore(
@@ -221,6 +220,7 @@ describe('redux module', () => {
       unsubscribe()
 
       store.dispatch(actions('course').many())
+      setTimeout(done, 500)
     }, 500))
   }).timeout(5000)
 })

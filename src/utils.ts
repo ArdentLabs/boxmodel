@@ -17,6 +17,18 @@ export const query = (gqlQuery: string, variables?: any): Promise<{ data: any }>
   })
     .then((response) => response.json())
 
+// Tag for query to shorten them in
+export const q = (template: TemplateStringsArray, ...insertions: any[]) => {
+  const result = String.raw({...template, raw: template}, ...insertions)
+
+  if (process.env.NODE_ENV !== 'development') {
+    return result.trim().replace(/\s+/g, ' ')
+  }
+  else {
+    return result
+  }
+}
+
 type ModelFunction<T> = (modelName: string) => T
 
 export const memoize = <T>(callable: ModelFunction<T>): ModelFunction<T> => {
