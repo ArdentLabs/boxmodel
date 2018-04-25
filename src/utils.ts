@@ -19,7 +19,7 @@ export const query = (gqlQuery: string, variables?: any): Promise<{ data: any }>
 
 // Tag for query to shorten them in
 export const q = (template: TemplateStringsArray, ...insertions: any[]) => {
-  const result = String.raw({...template, raw: template}, ...insertions)
+  const result = String.raw({ ...template, raw: template }, ...insertions)
 
   if (process.env.NODE_ENV !== 'development') {
     return result.trim().replace(/\s+/g, ' ')
