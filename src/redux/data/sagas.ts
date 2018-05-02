@@ -1,16 +1,19 @@
 import { AnyAction } from 'redux'
 import { SagaIterator } from 'redux-saga'
-import { initSchema } from '../schema'
+import * as effects from 'redux-saga/effects'
 
-const resolved: Set<string> = new Set()
+import { initSchema } from '../schema'
+import types from './types'
+
+const initialized: Set<string> = new Set()
 
 function* model(a: AnyAction): SagaIterator {
   const { payload } = a
   const { modelName } = payload
-  if (resolved.has(modelName)) {
+  if (initialized.has(modelName)) {
     return
   }
-  resolved.add(modelName)
+  initialized.add(modelName)
   yield* initSchema(modelName)
 
   function* one(action: AnyAction): SagaIterator {
@@ -32,4 +35,14 @@ function* model(a: AnyAction): SagaIterator {
   function* archive(action: AnyAction): SagaIterator {
     console.log('archive action caught by saga.')
   }
+
+  yield effects.takeLatest(types(modelName).one.request, one)
+  yield effects.takeLatest(types(modelName).many.request, many)
+  yield effects.takeLatest(types(modelName).create.request, create)
+  yield effects.takeLatest(types(modelName).update.request, update)
+  yield effects.takeLatest(types(modelName).archive.request, archive)
+}
+
+function* saga() {
+  yield effects.takeEvery()
 }

@@ -1,4 +1,4 @@
-import { BoxModelState } from './redux';
+import { BoxModelState } from './redux/reducer'
 
 export interface Config {
   /** The API URL, <b>without</b> `/graphql`. Defaults to empty string. */
@@ -7,12 +7,15 @@ export interface Config {
   selector: (state: any) => BoxModelState
   /** Namespace of boxmodel actions. Defaults to `@@boxmodel`. */
   namespace: string
+  /** Function used to transform the id prop when normalizing. Defaults to appending 'Id' at the end. */
+  transformId: (field: string) => string
 }
 
 const defaultConfig: Config = {
   apiUrl: '',
   selector: (state) => state.boxmodel,
-  namespace: '@@boxmodel'
+  namespace: '@@boxmodel',
+  transformId: (field) => field + 'Id'
 }
 
 export const config: Config = { ...defaultConfig }

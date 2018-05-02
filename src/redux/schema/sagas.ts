@@ -2,7 +2,7 @@ import { SagaIterator } from 'redux-saga'
 import * as effects from 'redux-saga/effects'
 
 import * as utils from '../../utils'
-import { toTypeName, toModelName } from '../../names'
+import { pascalCase, camelCase } from '../../names'
 import introspection from './introspection'
 import types from './types'
 import { Joins } from './reducer'
@@ -32,7 +32,7 @@ const getRootType = (type: GQLType): { type: GQLType, list: boolean } => {
 }
 
 export function* initSchema(modelName: string): SagaIterator {
-  console.log(`Initializing schema for ${toTypeName(modelName)}`)
+  console.log(`Initializing schema for ${pascalCase(modelName)}`)
 
   try {
     // Initialize internal schema, used for creating queries
@@ -63,7 +63,7 @@ export function* initSchema(modelName: string): SagaIterator {
           }
           catch (error) {
             console.error(
-              `Failed to resolve type of ${toTypeName(modelName)}.${toModelName(type.name)}.`,
+              `Failed to resolve type of ${pascalCase(modelName)}.${camelCase(type.name)}.`,
               'Resorting to simple field handling.'
             )
           }
@@ -80,11 +80,11 @@ export function* initSchema(modelName: string): SagaIterator {
       }
     }
 
-    console.log(`Schema for ${toTypeName(modelName)} initialized.`)
+    console.log(`Schema for ${pascalCase(modelName)} initialized.`)
     yield effects.put({
       type: types.SCHEMA_OK,
       payload: {
-        [toTypeName(modelName)]: {
+        [pascalCase(modelName)]: {
           fields,
           joins
         }
@@ -92,11 +92,11 @@ export function* initSchema(modelName: string): SagaIterator {
     })
   }
   catch (error) {
-    console.error(`Error when initializing schema for ${toTypeName(modelName)}.`)
+    console.error(`Error when initializing schema for ${pascalCase(modelName)}.`)
     yield effects.put({
       type: types.SCHEMA_FAIL,
       payload: {
-        [toTypeName(modelName)]: {
+        [pascalCase(modelName)]: {
           _error: error
         }
       }

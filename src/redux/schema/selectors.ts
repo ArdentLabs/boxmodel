@@ -1,7 +1,7 @@
 import { Selector, createSelector } from 'reselect'
 
 import * as utils from '../../utils'
-import { toTypeName } from '../../names'
+import { pascalCase } from '../../names'
 import { SchemaState, Joins } from './reducer'
 
 export const selectSchema: Selector<any, SchemaState> = createSelector(
@@ -11,6 +11,6 @@ export const selectSchema: Selector<any, SchemaState> = createSelector(
 
 export const selectModelSchema = createSelector(
   selectSchema,
-  (_: any, modelName: string) => toTypeName(modelName),
+  (_: any, modelName: string) => pascalCase(modelName),
   (schema, typeName): { fields: string[], joins: Joins, _error?: any } => schema[typeName]
 )

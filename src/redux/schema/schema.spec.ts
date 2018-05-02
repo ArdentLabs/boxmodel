@@ -1,9 +1,11 @@
 import { createStore, applyMiddleware } from 'redux'
 import createSagaMiddleware from 'redux-saga'
+import 'isomorphic-fetch'
 
 import { configure } from '../../config'
 import reducer from './reducer'
 import { initSchema } from './sagas'
+import { finalState } from '../../utils'
 
 before(() => {
   configure({
@@ -21,11 +23,11 @@ describe('schema module', () => {
       yield* initSchema('course')
     }
 
-    sagaMiddleware.run(testSaga)
+    finalState(store).then((state) => {
+      console.log(JSON.stringify(state, null, '  '))
+      done(state.Course._error)
+    })
 
-    setTimeout(() => {
-      console.log(JSON.stringify(store.getState(), null, '  '))
-      done()
-    }, 500)
+    sagaMiddleware.run(testSaga)
   })
 })
