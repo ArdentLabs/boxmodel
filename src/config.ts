@@ -1,4 +1,4 @@
-import { BoxModelState } from './redux/reducer'
+import { BoxModelState } from './redux'
 
 export interface Config {
   /** The API URL, <b>without</b> `/graphql`. Defaults to empty string. */
@@ -20,6 +20,9 @@ const defaultConfig: Config = {
 
 export const config: Config = { ...defaultConfig }
 
+/**
+ * Configure the boxmodel module. Call before using anything else in boxmodel.
+ */
 export const configure = (cfg: Partial<Config>) => {
   Object.assign(config, cfg)
 }

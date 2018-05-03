@@ -8,12 +8,19 @@ export interface Join {
 }
 
 export interface Actions {
+  /** Initialize the model. Should only be called once. */
   init: () => AnyAction
+  /** Meta action. Only updates loading state. */
   one: (id: string, join?: Join) => AnyAction
+  /** Meta action. Only updates loading state. */
   many: (variables: any, join?: Join) => AnyAction
+  /** Meta action. Only updates loading state. */
   create: (values: any, join?: Join) => AnyAction
+  /** Meta action. Only updates loading state. */
   update: (id: string, values: any, join?: Join) => AnyAction
+  /** Meta action. Only updates loading state. */
   archive: (id: string, join?: Join) => AnyAction
+  /** Dispenses data for reducer to cache. */
   merge: (values: any) => AnyAction
 }
 

@@ -20,6 +20,9 @@ interface GQLField {
   type: GQLType
 }
 
+/**
+ * Utility function for stripping non-null and list types.
+ */
 const getRootType = (type: GQLType): { type: GQLType, list: boolean } => {
   let list = false
   while (type.ofType) {
@@ -31,6 +34,11 @@ const getRootType = (type: GQLType): { type: GQLType, list: boolean } => {
   return { type, list }
 }
 
+/**
+ * Initialize the schema for a certain model.
+ * It will not recursively initialize schema for any other models.
+ * It does not check if the model has been initialized already, instead will always overwrite the current schema.
+ */
 export function* initSchema(modelName: string): SagaIterator {
   console.log(`Initializing schema for ${pascalCase(modelName)}`)
 
