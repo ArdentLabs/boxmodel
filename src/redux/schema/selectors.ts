@@ -9,6 +9,12 @@ export const selectSchema: Selector<any, SchemaState> = createSelector(
   (boxmodel) => boxmodel.schema
 )
 
+export const selectTypeSchema = createSelector(
+  selectSchema,
+  (_: any, typeName: string) => typeName,
+  (schema, typeName): { fields: string[], joins: Joins, _error?: any } => schema[typeName]
+)
+
 export const selectModelSchema = createSelector(
   selectSchema,
   (_: any, modelName: string) => pascalCase(modelName),

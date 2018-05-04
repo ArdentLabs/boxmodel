@@ -9,12 +9,14 @@ export interface Joins {
   }
 }
 
+export interface ModelSchema {
+  fields: string[],
+  joins: Joins,
+  _error?: any
+}
+
 export interface SchemaState {
-  [TypeName: string]: {
-    fields: string[],
-    joins: Joins,
-    _error?: any
-  }
+  [TypeName: string]: ModelSchema
 }
 
 const defaultState: SchemaState = {}

@@ -2,10 +2,12 @@ import { SagaIterator } from 'redux-saga'
 import * as effects from 'redux-saga/effects'
 
 import * as utils from '../../utils'
-import { pascalCase, camelCase } from '../../names'
+import { camelCase, pascalCase } from '../../names'
 import introspection from './introspection'
 import types from './types'
-import { Joins } from './reducer'
+import { Joins, ModelSchema } from './reducer'
+import { Join } from '../data/actions'
+import { selectTypeSchema } from './selectors'
 
 type GQLKind = 'SCALAR' | 'OBJECT' | 'INTERFACE' | 'UNION' | 'ENUM' | 'INPUT_OBJECT' | 'LIST' | 'NON_NULL'
 
@@ -40,12 +42,12 @@ const getRootType = (type: GQLType): { type: GQLType, list: boolean } => {
  * It does not check if the model has been initialized already, instead will always overwrite the current schema.
  */
 export function* initSchema(modelName: string): SagaIterator {
-  console.log(`Initializing schema for ${pascalCase(modelName)}`)
+  console.log(`Initializing ${modelName} schema`)
 
   try {
     // Initialize internal schema, used for creating queries
     const { data } = yield effects.call(utils.query, introspection, {
-      typeName: modelName.substring(0, 1).toUpperCase() + modelName.substring(1)
+      typeName: pascalCase(modelName)
     })
     const attributes = data.__type.fields as GQLField[]
 
@@ -88,7 +90,7 @@ export function* initSchema(modelName: string): SagaIterator {
       }
     }
 
-    console.log(`Schema for ${pascalCase(modelName)} initialized.`)
+    console.log(`Initialized ${modelName} schema`)
     yield effects.put({
       type: types.SCHEMA_OK,
       payload: {
@@ -98,9 +100,10 @@ export function* initSchema(modelName: string): SagaIterator {
         }
       }
     })
+    return { fields, joins }
   }
   catch (error) {
-    console.error(`Error when initializing schema for ${pascalCase(modelName)}.`)
+    console.error(`Error when initializing ${modelName} schema`)
     yield effects.put({
       type: types.SCHEMA_FAIL,
       payload: {
@@ -111,3 +114,32 @@ export function* initSchema(modelName: string): SagaIterator {
     })
   }
 }
+
+/**
+ * Initialize the schema store so that all joined models have their schemas loaded.
+ * This function should always be called before trying to query for something.
+ */
+export function* loadJoin(typeName: string, join: Join | true): SagaIterator {
+  let schema: ModelSchema = yield effects.select((state) => selectTypeSchema(state, typeName))
+  if (!schema) {
+    schema = yield* initSchema(camelCase(typeName))
+  }
+
+  if (join === true) {
+    return
+  }
+  yield effects.all(
+    Object.keys(join)
+      .filter((field) => {
+        if (field in schema.joins) {
+          return true
+        }
+        else {
+          console.warn(`Encountered unknown join \`${typeName}.${field}\`. Skipping.`)
+          return false
+        }
+
+            })
+            .map((field) => effects.call(loadJoin, schema.joins[field].type, join[field]))
+        )
+      }
